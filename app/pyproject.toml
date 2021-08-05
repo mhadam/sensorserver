@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "sensorserver"
+version = "0.1.0"
+description = ""
+authors = ["mhadam <michael@hadam.us>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.68.0"
+Hypercorn = "^0.11.2"
+databases = {extras = ["postgresql"], version = "^0.4.3"}
+bcrypt = "^3.2.0"
+passlib = "^1.7.4"
+alembic = "^1.6.5"
+psycopg2 = "^2.9.1"
+
+[tool.poetry.dev-dependencies]
+ward = "^0.63.0-beta.0"
+httpx = "^0.18.2"
+asgi-lifespan = "^1.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
