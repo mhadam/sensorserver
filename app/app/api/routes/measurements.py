@@ -18,7 +18,7 @@ router = APIRouter()
 )
 async def create_new_measurement(
     device_id: str,
-    new_measurement: AirMeasurementCreate = Body(..., embed=True),
+    new_measurement: AirMeasurementCreate = Body(...),
     measurement_repo: MeasurementRepository = Depends(
         get_repository(MeasurementRepository)
     ),
