@@ -11,5 +11,5 @@ class MeasurementRepository(BaseRepository):
     """
 
     async def create_measurement(self, *, new_measurement: AirMeasurementCreate):
-        query_values = new_measurement.dict()
+        query_values = new_measurement.dict(exclude={'wifi'})
         await self.db.execute(query=insert(Measurements), values=query_values)
