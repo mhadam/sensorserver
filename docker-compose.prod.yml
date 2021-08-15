@@ -19,7 +19,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - sensorserver_postgres_data_prod:/var/lib/postgresql/data/
+      - postgres_data:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=dev
       - POSTGRES_PASSWORD=dev
@@ -48,4 +48,4 @@ services:
       # So that Traefik can listen to the Docker events
       - "/var/run/docker.sock:/var/run/docker.sock"
 volumes:
-  sensorserver_postgres_data_prod:
+  postgres_data:
