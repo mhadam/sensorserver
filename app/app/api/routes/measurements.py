@@ -4,7 +4,6 @@ from app.db.repositories.measurement import MeasurementRepository
 from app.dependencies.database import get_repository
 from app.models.measurements import AirMeasurementCreate
 from fastapi import APIRouter, Body, Depends
-from starlette.requests import Request
 from starlette.status import HTTP_201_CREATED
 
 logger = logging.getLogger(__name__)

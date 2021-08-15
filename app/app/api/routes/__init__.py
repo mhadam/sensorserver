@@ -7,5 +7,5 @@ router = APIRouter()
 
 
 router.include_router(
-    measurements_router, prefix="/measurements", tags=["measurements"]
+    measurements_router, tags=["measurements"]
 )

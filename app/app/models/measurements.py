@@ -16,7 +16,7 @@ class MeasurementBase(CoreModel):
 class AirMeasurement(MeasurementBase):
     co2: int = Field(..., alias="rco2")
     temperature: float = Field(..., alias="atmp")
-    pm2_5: float = Field(..., alias="pm02")
+    pm2_5: int = Field(..., alias="pm02")
     humidity: int = Field(..., alias="rhum")
 
 
