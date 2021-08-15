@@ -7,6 +7,8 @@ services:
       - ./.env.app.dev
     ports:
       - "8081:80"
+    volumes:
+      - ./app:/app/
     depends_on:
       - db
     labels:
