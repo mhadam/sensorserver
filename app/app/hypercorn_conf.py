@@ -2,6 +2,7 @@ workers = 1
 bind = "0.0.0.0:80"
 loglevel = "DEBUG"
 logconfig_dict = {
+    "accesslog": "-",
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
