@@ -61,7 +61,7 @@ def run_migrations_offline() -> None:
             "Running testing migrations offline currently not permitted."
         )
 
-    alembic.context.config(url=str(DATABASE_URL), target_metadata=target_metadata)
+    alembic.context.configure(url=str(DATABASE_URL), target_metadata=target_metadata)
 
     with alembic.context.begin_transaction():
         alembic.context.run_migrations()

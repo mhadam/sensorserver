@@ -22,7 +22,7 @@ class AirMeasurement(MeasurementBase):
 
 class AirMeasurementCreate(AirMeasurement, MeasurementBase):
     wifi: int
-    device_id: Optional[str] = None
+    _device_id: Optional[str] = None
 
 
 class AirMeasurementInDB(IDModelMixin, MeasurementBase):
