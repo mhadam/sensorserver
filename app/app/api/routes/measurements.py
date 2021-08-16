@@ -24,5 +24,5 @@ async def create_new_measurement(
     ),
 ):
     await measurement_repo.create_measurement(
-        new_measurement=new_measurement.copy(update={"_device_id": device_id})
+        new_measurement=new_measurement.copy(update={"device_id": device_id})
     )
