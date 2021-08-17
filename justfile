@@ -1,8 +1,10 @@
-reup-dev:
-    sudo docker-compose -f ./docker-compose.dev.yml up -d --force-recreate --build
+compose_file := ./docker-compose.$COMPOSE_ENV.yml
 
-run-dev:
-    sudo docker-compose -f ./docker-compose.dev.yml run server bash
+reup:
+    sudo docker-compose -f {{compose_file}} up -d --force-recreate --build
 
-log-dev:
-    sudo docker-compose -f ./docker-compose.dev.yml logs -f
+run:
+    sudo docker-compose -f {{compose_file}} run server bash
+
+log:
+    sudo docker-compose -f {{compose_file}} logs -f
