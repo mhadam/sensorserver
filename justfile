@@ -1,4 +1,7 @@
-compose_file := ./docker-compose.$COMPOSE_ENV.yml
+compose_file := "./docker-compose.$COMPOSE_ENV.yml"
+
+up:
+    sudo docker-compose -f {{compose_file}} up -d
 
 reup:
     sudo docker-compose -f {{compose_file}} up -d --force-recreate --build
