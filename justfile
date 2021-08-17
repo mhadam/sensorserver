@@ -8,3 +8,6 @@ run:
 
 log:
     sudo docker-compose -f {{compose_file}} logs -f
+
+db:
+    sudo docker-compose -f {{compose_file}} run db bash
