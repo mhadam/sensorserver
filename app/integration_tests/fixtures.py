@@ -3,6 +3,7 @@ import warnings
 
 import alembic
 from alembic.config import Config
+from app.db.repositories.measurement import MeasurementRepository
 from asgi_lifespan import LifespanManager
 from databases import Database
 from fastapi import FastAPI
@@ -21,19 +22,24 @@ def apply_migrations():
 
 
 @fixture(scope=Scope.Test)
-def app(apply_migrations: None) -> FastAPI:
+def app(apply_migrations=apply_migrations) -> FastAPI:
     from app.api.server import get_application
 
     return get_application()
 
 
 @fixture(scope=Scope.Test)
-def app(app: FastAPI) -> Database:
+def db(app=app) -> Database:
     return app.state._db
 
 
+@fixture
+def measurements_repo(db=db) -> MeasurementRepository:
+    return MeasurementRepository(db)
+
+
 @fixture(scope=Scope.Test)
-async def client(app: FastAPI) -> AsyncClient:
+async def client(app=app) -> AsyncClient:
     async with LifespanManager(app):
         async with AsyncClient(
             app=app,

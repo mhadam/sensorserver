@@ -2,9 +2,9 @@ services:
   server:
     build:
       context: ./app
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     env_file:
-      - ./.env.app.dev
+      - ./.env.app
     ports:
       - "8080:80"
     volumes:
@@ -21,6 +21,6 @@ services:
     environment:
       - POSTGRES_USER=dev
       - POSTGRES_PASSWORD=dev
-      - POSTGRES_DB=dev
+      - POSTGRES_DB=sensor_server_dev
 volumes:
   postgres_data:

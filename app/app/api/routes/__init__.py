@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.routes.measurements import router as measurements_router
+from app.api.routes.devices import router as measurements_router
 
 
 router = APIRouter()

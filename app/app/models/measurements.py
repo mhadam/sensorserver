@@ -22,9 +22,17 @@ class AirMeasurement(MeasurementBase):
 
 class AirMeasurementCreate(AirMeasurement, MeasurementBase):
     wifi: int
-    _device_id: Optional[str] = Field(None, alias="device_id")
+
+    class Config:
+        allow_population_by_field_name = True
+        underscore_attrs_are_private = True
 
 
-class AirMeasurementInDB(IDModelMixin, MeasurementBase):
+class AirMeasurementInDB(IDModelMixin, AirMeasurement):
     created_at: Optional[datetime]
     device_id: str
+
+
+class AirMeasurementPublic(AirMeasurementInDB):
+    class Config:
+        allow_population_by_field_name = True

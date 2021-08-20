@@ -1,0 +1,17 @@
+FROM bynect/hypercorn-fastapi:python3.9-slim
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONPATH=/app:/integration_tests:/unit_tests
+
+WORKDIR /app
+
+RUN apt-get update \
+&& apt-get -y install python3-dev libpq-dev build-essential \
+&& apt-get clean
+
+COPY requirements-dev.txt .
+RUN python3 -m pip install -r requirements-dev.txt \
+--no-cache-dir --no-color --no-python-version-warning --disable-pip-version-check
+
+ENV APP_MODULE="app.api.server:app"
