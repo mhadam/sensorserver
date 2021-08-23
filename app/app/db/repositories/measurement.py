@@ -12,7 +12,9 @@ class MeasurementRepository(BaseRepository):
     All database actions associated with the Measurement resource
     """
 
-    async def create_measurement(self, device_id: str, new_measurement: AirMeasurementCreate):
+    async def create_measurement(
+        self, device_id: str, new_measurement: AirMeasurementCreate
+    ):
         query_values = new_measurement.dict(exclude={"wifi"})
         query_values["device_id"] = device_id
         await self.db.execute(query=insert(Measurements), values=query_values)

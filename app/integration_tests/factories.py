@@ -15,5 +15,7 @@ def new_create_measurement() -> AirMeasurementCreate:
     )
 
 
-async def create_measurement(repo: MeasurementRepository, device_id: str, record: AirMeasurementCreate):
+async def create_measurement(
+    repo: MeasurementRepository, device_id: str, record: AirMeasurementCreate
+):
     await repo.create_measurement(device_id, new_measurement=record)

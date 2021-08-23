@@ -25,10 +25,7 @@ async def create_new_measurement(
         get_repository(MeasurementRepository)
     ),
 ):
-    await measurement_repo.create_measurement(
-        device_id,
-        new_measurement
-    )
+    await measurement_repo.create_measurement(device_id, new_measurement)
 
 
 @router.get(

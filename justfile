@@ -14,3 +14,7 @@ log:
 
 db:
     sudo docker-compose -f {{compose_file}} run db bash
+
+deps:
+    cd app && poetry export -o requirements-dev.txt --dev --without-hashes
+    cd app && poetry export -o requirements.txt --without-hashes
