@@ -7,7 +7,7 @@ networks:
     external: false
 
 services:
-  server:
+  app:
     build:
       context: ./app
       dockerfile: Dockerfile
@@ -18,9 +18,9 @@ services:
     depends_on:
       - db
     labels:
-      - traefik.http.routers.blog.rule=Host(`sensors.hadam.us`)
-      - traefik.http.routers.blog.tls=true
-      - traefik.http.routers.blog.tls.certresolver=lets-encrypt
+      - traefik.http.routers.app.rule=Host(`sensors.hadam.us`)
+      - traefik.http.routers.app.tls=true
+      - traefik.http.routers.app.tls.certresolver=lets-encrypt
       - traefik.port=80
     networks:
       - internal
@@ -50,5 +50,18 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - web
+  webserver:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/pages:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - interal
+    labels:
+      - traefik.http.routers.webserver.rule=Host(`sensors.hadam.us`)
+      - traefik.http.routers.webserver.tls=true
+      - traefik.http.routers.webserver.tls.certresolver=lets-encrypt
+      - traefik.port=80
 volumes:
   postgres_data:

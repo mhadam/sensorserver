@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
-import bcrypt
 import jwt
 from app.core.config import (
     SECRET_KEY,
@@ -9,50 +8,28 @@ from app.core.config import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     JWT_ALGORITHM,
 )
-from app.models.token import JWTMeta, JWTCreds, JWTPayload
+from app.models.device_allow import DeviceJWTCreds, DeviceJWTPayload
+from app.models.token import JWTMeta
 from fastapi import HTTPException
-from passlib.context import CryptContext
-
-from app.models.user import UserPasswordUpdate, UserInDB
 from pydantic import ValidationError
 from starlette import status
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-
-class AuthException(BaseException):
-    """
-    Custom auth exception that can be modified later on.
-    """
-
-    pass
-
-
-def verify_password(password: str, salt: str, hashed_pw: str) -> bool:
-    return pwd_context.verify(password + salt, hashed_pw)
-
-
-def hash_with_salt(plaintext_password: str) -> UserPasswordUpdate:
-    salt = bcrypt.gensalt().decode()
-    hashed_password = pwd_context.hash(plaintext_password + salt)
-    return UserPasswordUpdate(salt=salt, password=hashed_password)
-
-
-def create_access_token_for_user(
-    user: UserInDB,
+def create_access_token_for_device(
+    device_id: str,
     secret_key: str = str(SECRET_KEY),
     audience: str = JWT_AUDIENCE,
     expires_in: int = ACCESS_TOKEN_EXPIRE_MINUTES,
 ) -> Optional[str]:
-    if not user or not isinstance(user, UserInDB):
+    if not device_id:
         return None
     jwt_meta = JWTMeta(
         aud=audience,
         iat=datetime.timestamp(datetime.utcnow()),
         exp=datetime.timestamp(datetime.utcnow() + timedelta(minutes=expires_in)),
     )
-    jwt_creds = JWTCreds(sub=user.email, username=user.username)
-    token_payload = JWTPayload(
+    jwt_creds = DeviceJWTCreds(device_id=device_id)
+    token_payload = DeviceJWTPayload(
         **jwt_meta.dict(),
         **jwt_creds.dict(),
     )
@@ -62,16 +39,18 @@ def create_access_token_for_user(
     return access_token
 
 
-def get_username_from_token(token: str, secret_key: str) -> Optional[str]:
+def get_device_id_from_token(
+    token: str, secret_key: str = str(SECRET_KEY)
+) -> Optional[str]:
     try:
         decoded_token = jwt.decode(
             token, str(secret_key), audience=JWT_AUDIENCE, algorithms=[JWT_ALGORITHM]
         )
-        payload = JWTPayload(**decoded_token)
+        payload = DeviceJWTPayload(**decoded_token)
     except (jwt.PyJWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate token credentials.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return payload.username
+    return payload.device_id

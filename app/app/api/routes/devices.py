@@ -3,7 +3,7 @@ import logging
 from typing import Optional, List
 
 from app.db.repositories.measurement import MeasurementRepository
-from app.dependencies.database import get_repository
+from app.api.dependencies.database import get_repository
 from app.models.measurements import AirMeasurementCreate, AirMeasurementPublic
 from fastapi import APIRouter, Body, Depends
 from starlette import status
@@ -48,3 +48,14 @@ async def get_device_measurements(
     return await measurement_repo.get_measurements(
         device_id=device_id, limit=limit, before=before, after=after
     )
+
+
+@router.get(
+    "/device/{device_id}:authorize",
+    name="device:authorize",
+    status_code=status.HTTP_200_OK,
+)
+async def authorize_device(
+    device_id: str,
+):
+    pass

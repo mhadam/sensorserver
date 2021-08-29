@@ -3,7 +3,11 @@ import warnings
 
 import alembic
 from alembic.config import Config
+from app.core.config import JWT_TOKEN_PREFIX, SECRET_KEY
 from app.db.repositories.measurement import MeasurementRepository
+from app.db.repositories.users import UsersRepository
+from app.models.user import UserCreate, UserInDB
+from app.services.authentication import create_access_token_for_user
 from asgi_lifespan import LifespanManager
 from databases import Database
 from fastapi import FastAPI
@@ -47,3 +51,30 @@ async def client(app=app) -> AsyncClient:
             headers={"Content-Type": "application/json"},
         ) as client:
             yield client
+
+
+@fixture
+async def user(db=db) -> UserInDB:
+    new_user = UserCreate(
+        email="lebron@james.io", username="lebronjames", password="heatcavslakers"
+    )
+
+    user_repo = UsersRepository(db)
+
+    existing_user = await user_repo.get_user_by_email(email=new_user.email)
+    if existing_user:
+        return existing_user
+
+    return await user_repo.register_new_user(new_user)
+
+
+@fixture
+def authorized_client(client: AsyncClient, test_user: UserInDB) -> AsyncClient:
+    access_token = create_access_token_for_user(
+        user=test_user, secret_key=str(SECRET_KEY)
+    )
+    client.headers = {
+        **client.headers,
+        "Authorization": f"{JWT_TOKEN_PREFIX} {access_token}",
+    }
+    return client

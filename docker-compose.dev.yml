@@ -1,16 +1,26 @@
 services:
-  server:
+
+  reverse-proxy:
+    image: caddy:latest
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/pages:/srv
+      - ./caddy/certs:/certs
+    ports:
+      - 80:80
+      - 443:443
+
+  api:
     build:
       context: ./app
       dockerfile: Dockerfile.dev
     env_file:
       - ./.env.app
-    ports:
-      - "8080:80"
     volumes:
       - ./app:/app/
     depends_on:
       - db
+
   db:
     image: postgres
     restart: always
@@ -22,5 +32,6 @@ services:
       - POSTGRES_USER=dev
       - POSTGRES_PASSWORD=dev
       - POSTGRES_DB=sensor_server_dev
+
 volumes:
   postgres_data:

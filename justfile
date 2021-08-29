@@ -6,8 +6,17 @@ up:
 reup:
     sudo docker-compose -f {{compose_file}} up -d --force-recreate --build
 
-run:
-    sudo docker-compose -f {{compose_file}} run server bash
+run service:
+    sudo docker-compose -f {{compose_file}} run {{service}}
+
+run-sh service:
+    sudo docker-compose -f {{compose_file}} run {{service}} sh
+
+run-bash service:
+    sudo docker-compose -f {{compose_file}} run {{service}} bash
+
+restart service:
+    sudo docker-compose -f {{compose_file}} up --force-recreate -d {{service}}
 
 log:
     sudo docker-compose -f {{compose_file}} logs -f

@@ -1,8 +1,10 @@
 from app.db.tables import Base, timestamps
 from sqlalchemy import Column, Integer, Text, Boolean, Table
+from sqlalchemy.orm import relationship
 
 
 class Users(Base):
+    __tablename__ = "users"
     __table__ = Table(
         "users",
         Base.metadata,
@@ -16,3 +18,5 @@ class Users(Base):
         Column("is_superuser", Boolean, nullable=False, server_default="False"),
         *timestamps()
     )
+
+    device_auths = relationship("DeviceAuth", backref="users")
