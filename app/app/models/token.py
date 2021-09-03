@@ -18,7 +18,6 @@ class JWTCreds(CoreModel):
     """How we'll identify users"""
 
     sub: EmailStr
-    username: str
 
 
 class JWTPayload(JWTMeta, JWTCreds):
@@ -27,6 +26,10 @@ class JWTPayload(JWTMeta, JWTCreds):
     """
 
     pass
+
+
+class DeviceJWT(JWTMeta):
+    device_id: str
 
 
 class AccessToken(CoreModel):

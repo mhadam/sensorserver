@@ -7,7 +7,9 @@ from sqlalchemy import insert, select
 
 
 class DeviceAuthRepository(BaseRepository):
-    async def insert_allow(self, device_id: str, ip_address: IPv4Address) -> DeviceAuthInDb:
+    async def insert_allow(
+        self, device_id: str, ip_address: IPv4Address
+    ) -> DeviceAuthInDb:
         values = {"device_id": device_id, "ip_address": ip_address}
         query = insert(DeviceAllow).returning(*DeviceAllow.__table__.c)
         created = await self.db.execute(query=query, values=values)

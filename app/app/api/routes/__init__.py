@@ -8,4 +8,4 @@ router = APIRouter()
 
 
 router.include_router(measurements_router, tags=["measurements"])
-router.include_router(users_router, prefix="/users", tags=["users"])
+router.include_router(users_router)

@@ -6,5 +6,8 @@ localhost
 
 tls /certs/localhost.pem /certs/localhost-key.pem
 root * /srv
-reverse_proxy /api/* api:80
+@fastapi {
+  path /api/* /docs /openapi.json
+}
+reverse_proxy @fastapi api:80
 file_server

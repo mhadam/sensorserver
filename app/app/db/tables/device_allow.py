@@ -1,4 +1,5 @@
 from app.db.tables import Base, timestamps
+from fastapi_users.db.sqlalchemy import GUID
 from sqlalchemy import Column, BigInteger, Table, Text, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -13,12 +14,11 @@ class DeviceAllow(Base):
         Column("device_id", Text, nullable=False, index=True),
         Column(
             "user_id",
-            BigInteger,
-            ForeignKey("users.id", ondelete="CASCADE"),
+            GUID,
+            ForeignKey("user.id", ondelete="CASCADE"),
             nullable=False,
         ),
         Column("ip_address", Text, nullable=False),
-        Column("refresh_token", Text, nullable=True),
-        relationship("Users", back_populates="device_auths"),
         *timestamps()
     )
+    user = relationship("Users", back_populates="device_auths")
