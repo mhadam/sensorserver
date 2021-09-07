@@ -25,12 +25,14 @@ class AirMeasurementCreate(AirMeasurement, MeasurementBase):
 
     class Config:
         allow_population_by_field_name = True
-        underscore_attrs_are_private = True
 
 
 class AirMeasurementInDB(IDModelMixin, AirMeasurement):
     created_at: Optional[datetime]
     device_id: str
+
+    class Config:
+        orm_mode = True
 
 
 class AirMeasurementPublic(AirMeasurementInDB):

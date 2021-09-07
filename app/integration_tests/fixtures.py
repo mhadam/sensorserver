@@ -7,7 +7,6 @@ from app.core.config import JWT_TOKEN_PREFIX, SECRET_KEY
 from app.db.repositories.measurement import MeasurementRepository
 from app.models.user import UserCreate, UserDB
 from asgi_lifespan import LifespanManager
-from databases import Database
 from fastapi import FastAPI
 from fastapi_users import FastAPIUsers
 from httpx import AsyncClient
@@ -17,7 +16,6 @@ from ward import fixture, Scope
 @fixture(scope=Scope.Global)
 def apply_migrations():
     warnings.filterwarnings("ignore", category=DeprecationWarning)
-    os.environ["TESTING"] = "1"
     config = Config("alembic.ini")
     alembic.command.upgrade(config, "head")
     yield

@@ -10,8 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 async def connect_to_db(app: FastAPI) -> None:
-    if os.environ.get("TESTING"):
-        database.url = DatabaseURL(f"{DATABASE_URL}_test")
     try:
         await database.connect()
         app.state._db = database

@@ -44,10 +44,6 @@ async def _(
         "email": "shakira@shakira.io",
         "password": "chantaje",
     }
-    # make sure user doesn't exist yet
-    rows = await app.state._db.fetch_all(query="\dt")
-    print([row for row in rows])
-    breakpoint()
     with raises(UserNotExists):
         await fastapi_users.get_user(new_user["email"])
     # send post request to create user and ensure it is successful

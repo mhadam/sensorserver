@@ -1,23 +1,24 @@
 from datetime import datetime
 from typing import Optional, List
 
-from app.db.repositories.base import BaseRepository
+from sqlalchemy import select, desc
+from sqlalchemy.orm import Session
+
+from app.db.crud import CRDBase
 from app.db.tables.measurements import Measurements
-from app.models.measurements import AirMeasurementCreate, AirMeasurementPublic
-from sqlalchemy import insert, select, desc
+from app.models.measurements import AirMeasurementCreate, AirMeasurementPublic, AirMeasurement
 
 
-class MeasurementRepository(BaseRepository):
+class MeasurementRepository(CRDBase[AirMeasurement, AirMeasurementCreate]):
     """ "
     All database actions associated with the Measurement resource
     """
 
-    async def create_measurement(
-        self, device_id: str, new_measurement: AirMeasurementCreate
-    ):
+    async def create(self, db: Session, *, device_id: str, new_measurement: AirMeasurementCreate) -> AirMeasurement:
         query_values = new_measurement.dict(exclude={"wifi"})
         query_values["device_id"] = device_id
-        await self.db.execute(query=insert(Measurements), values=query_values)
+        super().create(db, obj_in=query_values)
+        # await self.db.execute(query=insert(Measurements), values=query_values)
 
     async def get_measurements(
         self,
