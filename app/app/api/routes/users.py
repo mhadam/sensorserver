@@ -6,12 +6,8 @@ router = APIRouter()
 
 router.include_router(
     fastapi_users.get_auth_router(cookie_authentication, requires_verification=True),
-    prefix="/auth/jwt",
+    prefix="/auth/cookie",
     tags=["auth"],
-)
-
-router.include_router(
-    fastapi_users.get_register_router(), prefix="/auth", tags=["auth"]
 )
 
 router.include_router(
@@ -63,3 +59,15 @@ router.include_router(
 # @router.get("/me/", response_model=UserPublic, name="users:get-current-user")
 # async def get_currently_authenticated_user() -> UserPublic:
 #     return None
+# @router.get(
+#     "/users/me",
+#     name="users:authorize",
+#     status_code=status.HTTP_200_OK,
+# )
+# async def authorize_device(
+#     device_id: str,
+#     request: Request,
+#     response: Response,
+#     session: AsyncSession = Depends(get_session),
+# ):
+#     pass

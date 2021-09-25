@@ -2,12 +2,12 @@
 Automatically add all models to __all__
 This is used in alembic while autogenerating database migration script.
 """
+import glob
+from os.path import basename, dirname, join, isfile
 from typing import Tuple
 
 from sqlalchemy import Column, TIMESTAMP, func
 from sqlalchemy.ext.declarative import declarative_base
-from os.path import dirname, basename, isfile, join
-import glob
 
 modules = glob.glob(join(dirname(__file__), "*.py"))
 __all__ = [

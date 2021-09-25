@@ -1,5 +1,5 @@
 from app.core.auth import auth_backends
-from app.db import database
+from app.db.database import database
 from app.db.tables.users import Users
 
 from app.models.user import UserDB, User, UserCreate, UserUpdate

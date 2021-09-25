@@ -2,7 +2,9 @@ FROM bynect/hypercorn-fastapi:python3.9-slim
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV PYTHONPATH=/app:/integration_tests:/unit_tests
+# ENV PYTHONPATH=/app:/integration_tests:/unit_tests
+ENV PYTHONPATH=/app
+
 
 WORKDIR /app
 

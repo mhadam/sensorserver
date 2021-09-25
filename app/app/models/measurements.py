@@ -20,11 +20,15 @@ class AirMeasurement(MeasurementBase):
     humidity: int = Field(..., alias="rhum")
 
 
-class AirMeasurementCreate(AirMeasurement, MeasurementBase):
+class AirMeasurementCreateBody(AirMeasurement):
     wifi: int
 
     class Config:
         allow_population_by_field_name = True
+
+
+class AirMeasurementCreate(AirMeasurement):
+    device_id: str
 
 
 class AirMeasurementInDB(IDModelMixin, AirMeasurement):

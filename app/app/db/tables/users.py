@@ -1,3 +1,5 @@
+from sqlalchemy.orm import relationship
+
 from app.db.tables import Base
 from fastapi_users.db import SQLAlchemyBaseUserTable
 
@@ -23,3 +25,5 @@ from fastapi_users.db import SQLAlchemyBaseUserTable
 
 class Users(Base, SQLAlchemyBaseUserTable):
     __tablename__ = "users"
+
+    device_auths = relationship("DeviceAuth", backref="users", passive_deletes=True)

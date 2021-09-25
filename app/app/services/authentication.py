@@ -9,7 +9,7 @@ from app.core.config import (
     DEVICE_ACCESS_TOKEN_EXPIRE_MINUTES,
     JWT_ALGORITHM,
 )
-from app.models.device_allow import DeviceJWTPayload
+from app.models.device_auth import DeviceJWTPayload
 from app.models.token import JWTMeta, JWTCreds, JWTPayload
 from app.models.user import UserDB
 from fastapi import HTTPException

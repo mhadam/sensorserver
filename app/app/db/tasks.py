@@ -1,10 +1,8 @@
 import logging
-import os
 
-from app.core.config import DATABASE_URL
-from app.db import database
-from databases import DatabaseURL
 from fastapi import FastAPI
+
+from app.db.database import database
 
 logger = logging.getLogger(__name__)
 

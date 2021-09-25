@@ -8,7 +8,7 @@ VERSION = "1.0.0"
 API_PREFIX = "/api"
 SECRET_KEY = config(
     "SECRET_KEY",
-    cast=Secret,
+    cast=str,
 )
 ACCESS_TOKEN_EXPIRE_MINUTES = config(
     "ACCESS_TOKEN_EXPIRE_MINUTES", cast=int, default=7 * 24 * 60
