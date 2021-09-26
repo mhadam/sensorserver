@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Optional, List
 
 from fastapi import APIRouter, Body, Depends, Response, HTTPException
-from pydantic import IPvAnyAddress
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.requests import Request
@@ -13,7 +12,7 @@ from app.api.dependencies.db import get_session
 from app.db.repositories.device_auth import DeviceAuthRepository
 from app.db.repositories.device_request import DeviceRequestRepository
 from app.db.repositories.measurement import MeasurementRepository
-from app.db.tables.device_auth import DeviceAuth as DeviceAuthTable, DeviceAuth
+from app.db.tables.device_auth import DeviceAuth as DeviceAuthTable
 from app.db.tables.device_request import DeviceRequest as DeviceRequestTable
 from app.models.device_auth import DeviceAuthCreate
 from app.models.measurements import (
@@ -44,7 +43,7 @@ async def create_new_measurement(
     db: AsyncSession = Depends(get_session),
 ):
     auth_repo = DeviceAuthRepository(DeviceAuthTable, db)
-    ip_address = IPvAnyAddress(request.client.host)
+    ip_address = request.client.host
     maybe_auth = await auth_repo.check_auth(device_id, ip_address)
     if maybe_auth is not None:
         repo = MeasurementRepository(AirMeasurement, db)
@@ -79,7 +78,7 @@ async def get_device_measurements(
     name="device:knock",
     status_code=status.HTTP_200_OK,
 )
-async def authorize_device(
+async def device_knock(
     device_id: str,
     request: Request,
     response: Response,
@@ -87,8 +86,9 @@ async def authorize_device(
 ):
     auth_repo = DeviceAuthRepository(DeviceAuthTable, db)
     request_repo = DeviceRequestRepository(DeviceRequestTable, db)
-    ip_address = IPvAnyAddress(request.client.host)
-    maybe_auth = auth_repo.check_auth(device_id, ip_address)
+    ip_address = request.client.host
+    maybe_auth = await auth_repo.check_auth(device_id, ip_address)
+    logger.info(maybe_auth)
     if maybe_auth is None:
         await request_repo.add_only_new(device_id, ip_address)
         return Response(status_code=status.HTTP_201_CREATED)
@@ -113,10 +113,13 @@ async def approve_request(
     user: User = Depends(current_user),
 ):
     request_repo = DeviceRequestRepository(DeviceRequestTable, db)
-    ip_address = IPvAnyAddress(request.client.host)
-    if request_repo.check_request(device_id, ip_address):
+    ip_address = request.client.host
+    is_requested = await request_repo.check_request(device_id, ip_address)
+    if is_requested:
         auth_repo = DeviceAuthRepository(DeviceAuthTable, db)
-        obj_in = DeviceAuthCreate(device_id=device_id, ip_address=ip_address, user=user.id)
+        obj_in = DeviceAuthCreate(
+            device_id=device_id, ip_address=ip_address, user_id=user.id
+        )
         await auth_repo.create(obj_in)
         await request_repo.remove_request(device_id, ip_address)
     return Response(status_code=status.HTTP_404_NOT_FOUND)

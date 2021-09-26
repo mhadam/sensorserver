@@ -1,6 +1,7 @@
 from typing import Optional
 
 from pydantic import IPvAnyAddress
+from sqlalchemy import select, delete
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound, IntegrityError
 
 from app.db.crud import CRUDBase
@@ -15,12 +16,14 @@ from app.models.device_request import (
 class DeviceRequestRepository(
     CRUDBase[DeviceRequestTable, DeviceRequestCreate, DeviceRequestUpdate]
 ):
-    async def add_only_new(self, device_id: str, ip_address: IPvAnyAddress):
+    async def add_only_new(
+        self, device_id: str, ip_address: IPvAnyAddress
+    ) -> Optional[DeviceRequest]:
         try:
             model = self.model
-            self.db.add(model(device_id=device_id, ip_address=ip_address))
-            await self.db.commit()
-            return DeviceRequest(device_id=device_id, ip_address=ip_address)
+            new_request = model(device_id=device_id, ip_address=ip_address)
+            self.db.add(new_request)
+            return DeviceRequest.from_orm(new_request)
         except (NoResultFound, MultipleResultsFound, IntegrityError):
             pass
 
@@ -29,19 +32,17 @@ class DeviceRequestRepository(
     ) -> Optional[DeviceRequest]:
         try:
             model = self.model
-            result = (
-                await self.db.query(self.model)
-                .filter(model.device_id == device_id and model.ip_address == ip_address)
-                .first()
+            query = select(model).filter(
+                model.device_id == device_id and model.ip_address == ip_address
             )
-            return DeviceRequest(**result)
-        except (NoResultFound, MultipleResultsFound):
-            pass
+            result = await self.db.execute(query)
+            return DeviceRequest.from_orm(result.scalars().one())
+        except (MultipleResultsFound, NoResultFound):
+            return
 
     async def remove_request(self, device_id: str, ip_address: IPvAnyAddress):
-        try:
-            model = self.model
-            statement = model.delete().where(model.device_id == device_id and model.ip_address == ip_address)
-            await self.db.execute(statement)
-        except (NoResultFound, MultipleResultsFound):
-            pass
+        model = self.model
+        statement = delete(model).where(
+            model.device_id == device_id and model.ip_address == ip_address
+        )
+        await self.db.execute(statement)

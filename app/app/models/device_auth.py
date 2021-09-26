@@ -30,7 +30,7 @@ class DeviceAuthUpdate(CoreModel):
 class DeviceAuthCreate(CoreModel):
     device_id: str
     ip_address: IPv4Address
-    user_id: Optional[UUID4]
+    user_id: UUID4
 
 
 class DeviceAuthApproval(CoreModel):

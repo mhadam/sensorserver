@@ -7,6 +7,9 @@ class DeviceRequest(CoreModel, IDModelMixin, DateTimeModelMixin):
     device_id: str
     ip_address: IPvAnyAddress
 
+    class Config:
+        orm_mode = True
+
 
 class DeviceRequestCreate(CoreModel):
     device_id: str

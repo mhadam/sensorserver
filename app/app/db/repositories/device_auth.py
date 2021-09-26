@@ -1,6 +1,7 @@
 from ipaddress import IPv4Address
 from typing import Optional
 
+from sqlalchemy import select
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 
 from app.db.crud import CRUDBase
@@ -12,15 +13,16 @@ from app.models.device_auth import DeviceAuthCreate, DeviceAuthUpdate, DeviceAut
 class DeviceAuthRepository(
     CRUDBase[DeviceAuthTable, DeviceAuthCreate, DeviceAuthUpdate]
 ):
-    async def check_auth(self, device_id: str, ip_address: IPv4Address) -> Optional[DeviceAuth]:
+    async def check_auth(
+        self, device_id: str, ip_address: IPv4Address
+    ) -> Optional[DeviceAuth]:
         try:
             model = self.model
-            result = (
-                await self.db.query(model)
-                .filter(model.device_id == device_id and model.ip_address == ip_address)
-                .first()
+            query = select(model).filter(
+                model.device_id == device_id and model.ip_address == ip_address
             )
-            return DeviceAuth(**result)
+            result = await self.db.execute(query)
+            return DeviceAuth(**(await result.one()))
         except (NoResultFound, MultipleResultsFound):
             pass
 
