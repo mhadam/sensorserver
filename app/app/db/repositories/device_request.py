@@ -23,6 +23,8 @@ class DeviceRequestRepository(
             model = self.model
             new_request = model(device_id=device_id, ip_address=ip_address)
             self.db.add(new_request)
+            await self.db.commit()
+            await self.db.refresh(new_request)
             return DeviceRequest.from_orm(new_request)
         except (NoResultFound, MultipleResultsFound, IntegrityError):
             pass

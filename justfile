@@ -3,6 +3,9 @@ compose_file := "./docker-compose.$COMPOSE_ENV.yml"
 up:
     sudo docker-compose -f {{compose_file}} up -d
 
+down:
+    sudo docker-compose -f {{compose_file}} down
+
 reup-all:
     sudo docker-compose -f {{compose_file}} up -d --force-recreate --build
 
@@ -37,3 +40,6 @@ chown-revisions:
 
 migrate:
     sudo docker-compose -f {{compose_file}} run api alembic upgrade head
+
+dump-db:
+    sudo docker-compose -f {{compose_file}} down -v

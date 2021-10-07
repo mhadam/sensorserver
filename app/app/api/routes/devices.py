@@ -1,8 +1,10 @@
+import json
 import logging
 from datetime import datetime
 from typing import Optional, List
 
 from fastapi import APIRouter, Body, Depends, Response, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.requests import Request
@@ -14,7 +16,8 @@ from app.db.repositories.device_request import DeviceRequestRepository
 from app.db.repositories.measurement import MeasurementRepository
 from app.db.tables.device_auth import DeviceAuth as DeviceAuthTable
 from app.db.tables.device_request import DeviceRequest as DeviceRequestTable
-from app.models.device_auth import DeviceAuthCreate
+from app.models.device_auth import DeviceAuthCreate, DeviceAuth
+from app.models.device_request import DeviceRequest
 from app.models.measurements import (
     AirMeasurementCreate,
     AirMeasurementPublic,
@@ -22,7 +25,7 @@ from app.models.measurements import (
     AirMeasurementCreateBody,
 )
 from app.models.user import User
-from app.services.authentication import create_access_token_for_device
+from app.services.authentication import create_access_token_for_device, get_device_id_from_token
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +33,11 @@ router = APIRouter()
 
 current_user = fastapi_users.current_user(active=True)
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 @router.post(
-    "/device/{device_id}:measure",
+    "/devices/{device_id}:measure",
     name="device:create-measurement",
     status_code=status.HTTP_201_CREATED,
 )
@@ -41,19 +46,25 @@ async def create_new_measurement(
     request: Request,
     new_measurement: AirMeasurementCreateBody = Body(...),
     db: AsyncSession = Depends(get_session),
+    token: str = Depends(oauth2_scheme),
 ):
+    token_device_id = get_device_id_from_token(token)
+    if token_device_id != device_id:
+        return Response(status_code=status.HTTP_401_UNAUTHORIZED)
+
     auth_repo = DeviceAuthRepository(DeviceAuthTable, db)
     ip_address = request.client.host
     maybe_auth = await auth_repo.check_auth(device_id, ip_address)
-    if maybe_auth is not None:
-        repo = MeasurementRepository(AirMeasurement, db)
-        obj = AirMeasurementCreate(device_id=device_id, **new_measurement.dict())
-        return repo.create(obj)
-    return Response(status_code=status.HTTP_401_UNAUTHORIZED)
+    if maybe_auth is None:
+        return Response(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    repo = MeasurementRepository(AirMeasurement, db)
+    obj = AirMeasurementCreate(device_id=device_id, **new_measurement.dict())
+    return repo.create(obj)
 
 
 @router.get(
-    "/device/{device_id}/measurements",
+    "/devices/{device_id}/measurements",
     name="device:get-measurements",
     status_code=status.HTTP_200_OK,
     response_model=List[AirMeasurementPublic],
@@ -74,7 +85,7 @@ async def get_device_measurements(
 
 
 @router.get(
-    "/device/{device_id}:knock",
+    "/devices/{device_id}:knock",
     name="device:knock",
     status_code=status.HTTP_200_OK,
 )
@@ -102,24 +113,51 @@ async def device_knock(
 
 
 @router.get(
-    "/request/{device_id}:approve",
-    name="request:approve",
+    "/requests/{request_id}:approve",
+    name="requests:approve",
     status_code=status.HTTP_200_OK,
 )
 async def approve_request(
-    device_id: str,
-    request: Request,
+    request_id: int,
     db: AsyncSession = Depends(get_session),
     user: User = Depends(current_user),
 ):
     request_repo = DeviceRequestRepository(DeviceRequestTable, db)
-    ip_address = request.client.host
-    is_requested = await request_repo.check_request(device_id, ip_address)
-    if is_requested:
+    maybe_request = await request_repo.get(request_id)
+    if maybe_request is not None:
         auth_repo = DeviceAuthRepository(DeviceAuthTable, db)
         obj_in = DeviceAuthCreate(
-            device_id=device_id, ip_address=ip_address, user_id=user.id
+            device_id=maybe_request.device_id, ip_address=maybe_request.ip_address, user_id=user.id
         )
         await auth_repo.create(obj_in)
-        await request_repo.remove_request(device_id, ip_address)
+        await request_repo.remove(request_id)
     return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+
+@router.get(
+    "/requests",
+    name="requests:get-all",
+    status_code=status.HTTP_200_OK,
+)
+async def get_requests(
+    db: AsyncSession = Depends(get_session),
+    user: User = Depends(current_user),
+) -> List[DeviceRequest]:
+    request_repo = DeviceRequestRepository(DeviceRequestTable, db)
+    result = await request_repo.get_multi(sort_recent=True)
+    return [DeviceRequest.from_orm(r) for r in result]
+
+
+@router.get(
+    "/devices",
+    name="device:get-all-auths",
+    status_code=status.HTTP_200_OK,
+)
+async def get_approvals(
+    db: AsyncSession = Depends(get_session),
+    user: User = Depends(current_user),
+) -> List[DeviceAuth]:
+    auth_repo = DeviceAuthRepository(DeviceAuthTable, db)
+    results = await auth_repo.get_multi(sort_recent=True)
+    logger.info(results)
+    return [DeviceAuth.from_orm(r[0]) for r in results]

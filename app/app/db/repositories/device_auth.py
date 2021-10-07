@@ -22,7 +22,7 @@ class DeviceAuthRepository(
                 model.device_id == device_id and model.ip_address == ip_address
             )
             result = await self.db.execute(query)
-            return DeviceAuth(**(await result.one()))
+            return DeviceAuth(**result.one())
         except (NoResultFound, MultipleResultsFound):
             pass
 

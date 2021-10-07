@@ -20,6 +20,9 @@ class DeviceAuth(CoreModel, IDModelMixin, DateTimeModelMixin):
     ip_address: IPv4Address
     user_id: Optional[UUID4]
 
+    class Config:
+        orm_mode = True
+
 
 class DeviceAuthUpdate(CoreModel):
     device_id: str

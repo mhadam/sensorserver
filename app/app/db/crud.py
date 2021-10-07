@@ -2,6 +2,7 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.tables import Base
@@ -24,15 +25,23 @@ class CRDBase(Generic[ModelType, CreateSchemaType]):
 
     async def get(self, id_: Any) -> Optional[ModelType]:
         model_id = getattr(self.model, "id")
-        return await self.db.query(self.model).filter(model_id == id_).first()
+        query = select(self.model).filter(model_id == id_)
+        result = await self.db.execute(query)
+        return result.scalars().one()
 
-    async def get_multi(self, skip: int = 0, limit: int = 100) -> List[ModelType]:
-        return await self.db.query(self.model).offset(skip).limit(limit).all()
+    async def get_multi(self, skip: int = 0, limit: int = 100, sort_recent: bool = False) -> List[ModelType]:
+        statement = select(self.model).offset(skip).limit(limit)
+        if sort_recent:
+            statement = statement.order_by(self.model.created_at.desc())
+        result = await self.db.execute(statement)
+        return result.scalars().all()
 
     async def create(self, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self.model(**obj_in_data)  # type: ignore
         self.db.add(db_obj)
+        await self.db.commit()
+        await self.db.refresh(db_obj)
         return db_obj
 
     async def remove(self, id_: int) -> ModelType:
@@ -54,4 +63,6 @@ class CRUDBase(CRDBase, Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
         await self.db.add(db_obj)
+        await self.db.commit()
+        await self.db.refresh(db_obj)
         return db_obj
