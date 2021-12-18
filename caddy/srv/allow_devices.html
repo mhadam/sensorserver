@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Allow devices</title>
+    <link rel=”stylesheet” type=”text/css” href=”/css/normalize.css”>
+    <script src="/htmx.js"></script>
+    <script src="/ext/json-enc.js"></script>
 </head>
 <body>
 <h1>Devices:</h1>
-<!-- Load from unpkg -->
-<script src="/htmx.js"></script>
-<script src="/ext/json-enc.js"></script>
-
 <form class="form-example"
       hx-post="/api/users/"
       hx-target="#reg-results"

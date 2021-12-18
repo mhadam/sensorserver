@@ -11,3 +11,8 @@ Place them in the `certs` folder, they should be:
 ```text
 localhost-key.pem  localhost.pem
 ```
+
+For local use:
+```bash
+sudo caddy run --config Caddyfile.dev
+```
