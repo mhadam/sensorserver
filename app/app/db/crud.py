@@ -37,7 +37,7 @@ class CRDBase(Generic[ModelType, CreateSchemaType]):
         return result.scalars().all()
 
     async def create(self, obj_in: CreateSchemaType) -> ModelType:
-        obj_in_data = jsonable_encoder(obj_in)
+        obj_in_data = jsonable_encoder(obj_in, by_alias=False)
         db_obj = self.model(**obj_in_data)  # type: ignore
         self.db.add(db_obj)
         await self.db.commit()

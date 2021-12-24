@@ -30,6 +30,9 @@ class AirMeasurementCreateBody(AirMeasurement):
 class AirMeasurementCreate(AirMeasurement):
     device_id: str
 
+    class Config:
+        allow_population_by_field_name = True
+
 
 class AirMeasurementInDB(IDModelMixin, AirMeasurement):
     created_at: Optional[datetime]

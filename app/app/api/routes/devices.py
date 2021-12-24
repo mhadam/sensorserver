@@ -1,4 +1,4 @@
-import json
+import ipaddress
 import logging
 from datetime import datetime
 from typing import Optional, List
@@ -16,6 +16,7 @@ from app.db.repositories.device_request import DeviceRequestRepository
 from app.db.repositories.measurement import MeasurementRepository
 from app.db.tables.device_auth import DeviceAuth as DeviceAuthTable
 from app.db.tables.device_request import DeviceRequest as DeviceRequestTable
+from app.db.tables.measurements import Measurements as MeasurementsTable
 from app.models.device_auth import DeviceAuthCreate, DeviceAuth
 from app.models.device_request import DeviceRequest
 from app.models.measurements import (
@@ -58,9 +59,9 @@ async def create_new_measurement(
     if maybe_auth is None:
         return Response(status_code=status.HTTP_401_UNAUTHORIZED)
 
-    repo = MeasurementRepository(AirMeasurement, db)
+    repo = MeasurementRepository(MeasurementsTable, db)
     obj = AirMeasurementCreate(device_id=device_id, **new_measurement.dict())
-    return repo.create(obj)
+    await repo.create(obj)
 
 
 @router.get(
@@ -84,6 +85,10 @@ async def get_device_measurements(
     )
 
 
+def get_ip_address(request: Request) -> ipaddress.IPv4Address:
+    return ipaddress.IPv4Address(request.headers.get('x-forwarded-host', request.client.host))
+
+
 @router.get(
     "/devices/{device_id}:knock",
     name="device:knock",
@@ -95,9 +100,12 @@ async def device_knock(
     response: Response,
     db: AsyncSession = Depends(get_session),
 ):
+    """Knock for authorization, repeatedly call until allowed to report.
+    Response will have a JWT token as a header.
+    """
     auth_repo = DeviceAuthRepository(DeviceAuthTable, db)
     request_repo = DeviceRequestRepository(DeviceRequestTable, db)
-    ip_address = request.client.host
+    ip_address = get_ip_address(request)
     maybe_auth = await auth_repo.check_auth(device_id, ip_address)
     logger.info(maybe_auth)
     if maybe_auth is None:
@@ -155,7 +163,7 @@ async def get_requests(
 )
 async def get_approvals(
     db: AsyncSession = Depends(get_session),
-    user: User = Depends(current_user),
+    _: User = Depends(current_user),
 ) -> List[DeviceAuth]:
     auth_repo = DeviceAuthRepository(DeviceAuthTable, db)
     results = await auth_repo.get_multi(sort_recent=True)

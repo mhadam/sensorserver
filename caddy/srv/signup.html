@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Allow devices</title>
+    <link rel=”stylesheet” type=”text/css” href=”/css/normalize.css”>
+    <script src="/htmx.js"></script>
+    <script src="/ext/json-enc.js"></script>
+    <script>
+        htmx.on("htmx:responseError", function(evt) {
+            var errdiv = document.getElementById("reg-results");
+            errdiv.innerHTML = evt.detail.xhr.responseText;
+        });
+    </script>
+</head>
+<body>
+<h1>Sign up</h1>
+<form class="form-example"
+      hx-post="/api/auth/cookie/login"
+      hx-target="#reg-results"
+>
+  <div class="form-example">
+    <label for="username">Username: </label>
+    <input type="text" name="username" id="username" required>
+  </div>
+  <div class="form-example">
+    <label for="password">Password: </label>
+    <input type="text" name="password" id="password" required>
+  </div>
+  <div class="form-example">
+    <button class="btn">Submit</button>
+  </div>
+</form>
+<div id="reg-results">hmmm</div>
+</body>
+</html>

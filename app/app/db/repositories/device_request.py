@@ -1,4 +1,5 @@
-from typing import Optional
+from ipaddress import IPv6Address, IPv4Address
+from typing import Optional, Union
 
 from pydantic import IPvAnyAddress
 from sqlalchemy import select, delete
@@ -17,7 +18,7 @@ class DeviceRequestRepository(
     CRUDBase[DeviceRequestTable, DeviceRequestCreate, DeviceRequestUpdate]
 ):
     async def add_only_new(
-        self, device_id: str, ip_address: IPvAnyAddress
+        self, device_id: str, ip_address: Union[IPv4Address, IPv6Address]
     ) -> Optional[DeviceRequest]:
         try:
             model = self.model
@@ -28,6 +29,14 @@ class DeviceRequestRepository(
             return DeviceRequest.from_orm(new_request)
         except (NoResultFound, MultipleResultsFound, IntegrityError):
             pass
+
+    async def get_device(self, device_id: str) -> Optional[DeviceRequest]:
+        model = self.model
+        query = select(model).filter(
+            model.device_id == device_id
+        )
+        result = await self.db.execute(query)
+        return DeviceRequest.from_orm(result.scalars().first())
 
     async def check_request(
         self, device_id: str, ip_address: IPvAnyAddress

@@ -1,3 +1,4 @@
+/caddy/caddy.log
 traefik/letsencrypt/
 .env.app.prod
 .env

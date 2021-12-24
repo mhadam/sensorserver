@@ -19,11 +19,11 @@ class DeviceAuthRepository(
         try:
             model = self.model
             query = select(model).filter(
-                model.device_id == device_id and model.ip_address == ip_address
+                model.device_id == device_id and model.ip_address == str(ip_address)
             )
             result = await self.db.execute(query)
-            return DeviceAuth(**result.one())
-        except (NoResultFound, MultipleResultsFound):
+            return result.one_or_none()
+        except MultipleResultsFound:
             pass
 
     # async def insert_allow(
