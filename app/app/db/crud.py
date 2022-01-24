@@ -45,8 +45,9 @@ class CRDBase(Generic[ModelType, CreateSchemaType]):
         return db_obj
 
     async def remove(self, id_: int) -> ModelType:
-        obj = await self.db.query(self.model).get(id_)
+        obj = await self.db.get(self.model, id_)
         await self.db.delete(obj)
+        await self.db.commit()
         return obj
 
 

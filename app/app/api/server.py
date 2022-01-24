@@ -1,10 +1,11 @@
-from starlette.templating import Jinja2Templates
-
-from app.api.routes import router as api_router
-from app.api.routes.htmx import router as htmx_router
-from app.core import tasks
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+
+from app.api.dependencies.files import css_files, root_files, js_files
+from app.api.routes import router as api_router
+from app.api.routes.pages import router as pages_router
+from app.api.routes.htmx import router as htmx_router
+from app.core import tasks
 
 
 def get_application() -> FastAPI:
@@ -22,10 +23,13 @@ def get_application() -> FastAPI:
 
     app_.include_router(htmx_router, prefix="/htmx")
     app_.include_router(api_router, prefix="/api")
+    app_.include_router(pages_router)
+
+    app_.mount("/css", css_files, name="css")
+    app_.mount("/js", js_files, name="js")
+    app_.mount("", root_files, name="root_files")
 
     return app_
 
-
-templates = Jinja2Templates(directory="templates")
 
 app = get_application()

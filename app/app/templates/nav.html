@@ -1,0 +1,50 @@
+<nav class="nav-bar">
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/devices.html">Devices</a></li>
+        <li><a href="/graphs.html">Graphs</a></li>
+        <li class="nav-right"
+            id="login-item"
+            _="
+            on htmx:responseError[
+                detail.pathInfo.path=='/api/auth/cookie/login'
+            ]
+                call setFailedLogin()
+            end
+            on htmx:afterRequest[
+                detail.pathInfo.path=='/api/auth/cookie/login' and
+                detail.successful==true
+            ]
+                call setLoggedIn()
+            end"
+        >
+            <button class="btn"
+                    id="login-button"
+                    _="on click toggle @hidden on #login"
+            >
+                Login
+            </button>
+            <div id="login" hidden>
+                <div id="login-content">
+                    <form hx-post="/api/auth/cookie/login" hx-swap="none">
+                        <fieldset id="inputs">
+                            <input id="username"
+                                   type="text"
+                                   name="username"
+                                   placeholder="Username"
+                                   required>
+                            <input id="password"
+                                   type="password"
+                                   name="password"
+                                   placeholder="Password"
+                                   required>
+                        </fieldset>
+                        <fieldset id="actions">
+                            <button class="btn">Submit</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </li>
+    </ul>
+</nav>

@@ -3,7 +3,7 @@ from sqlalchemy import Column, BigInteger, Table, Text, UniqueConstraint
 from app.db.tables import Base, timestamps
 
 
-class DeviceRequest(Base):
+class DeviceBlock(Base):
     __tablename__ = "device_block"
 
     __table__ = Table(

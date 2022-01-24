@@ -5,6 +5,8 @@ from typing import Optional, List
 
 from fastapi import APIRouter, Body, Depends, Response, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from psycopg2.errorcodes import UNIQUE_VIOLATION
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.requests import Request
@@ -12,9 +14,11 @@ from starlette.requests import Request
 from app.api.dependencies.auth import fastapi_users
 from app.api.dependencies.db import get_session
 from app.db.repositories.device_auth import DeviceAuthRepository
+from app.db.repositories.device_block import DeviceBlockRepository
 from app.db.repositories.device_request import DeviceRequestRepository
 from app.db.repositories.measurement import MeasurementRepository
 from app.db.tables.device_auth import DeviceAuth as DeviceAuthTable
+from app.db.tables.device_block import DeviceBlock as DeviceBlockTable
 from app.db.tables.device_request import DeviceRequest as DeviceRequestTable
 from app.db.tables.measurements import Measurements as MeasurementsTable
 from app.models.device_auth import DeviceAuthCreate, DeviceAuth
@@ -137,8 +141,48 @@ async def approve_request(
         obj_in = DeviceAuthCreate(
             device_id=maybe_request.device_id, ip_address=maybe_request.ip_address, user_id=user.id
         )
-        await auth_repo.create(obj_in)
+        try:
+            await auth_repo.create(obj_in)
+        except IntegrityError as e:
+            try:
+                if e.orig.pgcode == UNIQUE_VIOLATION:
+                    return Response(status_code=status.HTTP_400_BAD_REQUEST)
+            except AttributeError:
+                pass
+            raise e
         await request_repo.remove(request_id)
+        return Response(status_code=status.HTTP_200_OK)
+    return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+
+@router.get(
+    "/requests/{request_id}:block",
+    name="requests:block",
+    status_code=status.HTTP_200_OK,
+)
+async def block_request(
+    request_id: int,
+    db: AsyncSession = Depends(get_session),
+    user: User = Depends(current_user),
+):
+    request_repo = DeviceRequestRepository(DeviceRequestTable, db)
+    maybe_request = await request_repo.get(request_id)
+    if maybe_request is not None:
+        block_repo = DeviceBlockRepository(DeviceBlockTable, db)
+        obj_in = DeviceBlockTable(
+            device_id=maybe_request.device_id, ip_address=maybe_request.ip_address
+        )
+        try:
+            await block_repo.create(obj_in)
+        except IntegrityError as e:
+            try:
+                if e.orig.pgcode == UNIQUE_VIOLATION:
+                    return Response(status_code=status.HTTP_400_BAD_REQUEST)
+            except AttributeError:
+                pass
+            raise e
+        await request_repo.remove(request_id)
+        return Response(status_code=status.HTTP_200_OK)
     return Response(status_code=status.HTTP_404_NOT_FOUND)
 
 

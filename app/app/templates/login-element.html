@@ -1,0 +1,18 @@
+<li class="nav-right login">
+    <form class="form-example"
+          hx-post="/api/auth/cookie/login"
+          hx-target="#results"
+    >
+        <div class="login">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" required>
+        </div>
+        <div class="login">
+            <label for="password">Password</label>
+            <input type="text" name="password" id="password" required>
+        </div>
+        <div class="login">
+            <button class="btn">Submit</button>
+        </div>
+    </form>
+</li>

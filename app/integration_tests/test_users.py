@@ -1,26 +1,12 @@
-from typing import Union, Optional
-
-import jwt
-from app.api.dependencies.auth import fastapi_users
-from app.core.config import (
-    SECRET_KEY,
-    JWT_AUDIENCE,
-    ACCESS_TOKEN_EXPIRE_MINUTES,
-    JWT_ALGORITHM,
-)
-from app.models.user import User
-from app.services.authentication import (
-    create_access_token_for_user,
-)
-from databases import Database
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi_users.user import UserNotExists
 from httpx import AsyncClient
-from integration_tests.fixtures import app, client, db, user, authorized_client
-from pydantic import ValidationError
 from starlette import status
-from starlette.datastructures import Secret
 from ward import test, using, raises
+
+from app.api.dependencies.auth import fastapi_users
+from app.models.user import User
+from integration_tests.fixtures import app, client
 
 
 @test("user registration endpoint exists")

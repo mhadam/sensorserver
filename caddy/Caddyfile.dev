@@ -34,7 +34,7 @@
 	tls ./certs/localhost.pem ./certs/localhost-key.pem
 	root * srv
 	@fastapi {
-		path /api* /docs /openapi.json
+		path *
 	}
 	reverse_proxy @fastapi http://0.0.0.0:8080 {
       import theheaders

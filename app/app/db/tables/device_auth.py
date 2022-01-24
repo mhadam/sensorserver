@@ -1,4 +1,4 @@
-from fastapi_users.db.sqlalchemy import GUID
+from fastapi_users_db_sqlalchemy import GUID
 from sqlalchemy import Column, BigInteger, Table, Text, ForeignKey, UniqueConstraint
 
 from app.db.tables import Base, timestamps

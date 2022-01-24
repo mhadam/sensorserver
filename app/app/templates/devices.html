@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<button class='btn'
+        hx-get="/htmx/devices/requests-with-buttons"
+        hx-target="#replaceMe"
+        hx-swap="innerHTML">
+     Load devices...
+</button>
+<div id="replaceMe"></div>
+{% endblock %}

@@ -1,0 +1,82 @@
+:root {
+    box-sizing: border-box;
+}
+
+*,
+::before,
+::after {
+    box-sizing: inherit;
+}
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.container {
+}
+
+.nav-bar {
+    width: 100%;
+}
+
+.nav-links {
+    padding: 0 0 0 0;
+    display: flex;
+    justify-items: start;
+    align-items: start;
+    list-style: none;
+}
+
+.nav-links > li {
+    display: inline-block;
+    padding: 10px 10px;
+    text-decoration: none;
+}
+
+.nav-right {
+    margin-left: auto;
+}
+
+.main {
+}
+
+#login[hidden] {
+  visibility: hidden;
+  opacity: 0;
+  min-width: 5rem;
+  position: relative;
+  transition: all 0.5s ease;
+  margin-top: 1rem;
+  left: 0;
+  display: none;
+}
+
+#login-button[logged-in] {
+    background-color: #7AF635B5;
+}
+
+#login-button[failed] {
+    background-color: indianred;
+}
+
+#login {
+   visibility: visible;
+   opacity: 1;
+   display: block;
+}
+
+#login-button {
+    background: none;
+    border: 1px dashed;
+    border-radius: 5px;
+    color: black
+}
+
+/*#login-button:hover {*/
+/*    !*background: lightgrey;*!*/
+/*    border: 1px solid;*/
+/*}*/
+
+#login-button:active {
+    background-color: gainsboro;
+}

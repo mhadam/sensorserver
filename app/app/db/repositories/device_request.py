@@ -22,7 +22,7 @@ class DeviceRequestRepository(
     ) -> Optional[DeviceRequest]:
         try:
             model = self.model
-            new_request = model(device_id=device_id, ip_address=ip_address)
+            new_request = model(device_id=device_id, ip_address=str(ip_address))
             self.db.add(new_request)
             await self.db.commit()
             await self.db.refresh(new_request)

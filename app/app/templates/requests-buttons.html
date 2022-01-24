@@ -1,0 +1,19 @@
+<table>
+    <tr>
+        <th>Device ID</th>
+        <th>IP Address</th>
+        <th>Timestamp</th>
+        <th>Action</th>
+    </tr>
+{% for r in requests %}
+    <tr>
+        <td>{{r.device_id}}</td>
+        <td>{{r.ip_address}}</td>
+        <td>{{r.created_at}}</td>
+        <th>
+            <button hx-get="/api/requests/{{r.id}}:approve" hx-swap="none">Approve</button>
+            <button hx-get="/api/requests/{{r.id}}:block" hx-swap="none">Block</button>
+        </th>
+    </tr>
+{% endfor %}
+</table>
