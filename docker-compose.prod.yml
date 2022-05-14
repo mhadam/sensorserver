@@ -1,67 +1,35 @@
-version: "3"
-
-networks:
-  web:
-    external: true
-  internal:
-    external: false
-
 services:
-  app:
+
+  reverse-proxy:
+    image: caddy:latest
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/pages:/srv
+      - ./caddy/certs:/certs
+    ports:
+      - 80:80
+      - 443:443
+
+  api:
     build:
       context: ./app
       dockerfile: Dockerfile
     env_file:
-      - ./.env.app.prod
+      - ./.env.app
     volumes:
       - ./app:/app/
     depends_on:
       - db
-    labels:
-      - traefik.http.routers.app.rule=Host(`sensors.hadam.us`)
-      - traefik.http.routers.app.tls=true
-      - traefik.http.routers.app.tls.certresolver=lets-encrypt
-      - traefik.port=80
-    networks:
-      - internal
-      - web
+
   db:
     image: postgres
     restart: always
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.app.prod
-    networks:
-      - internal
-    labels:
-      - traefik.enable=false
-  traefik:
-    image: traefik:v2.5
-    env_file:
-      - ./.env.app.prod
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./traefik/traefik.toml:/traefik.toml
-      - ./traefik/traefik_dynamic.toml:/traefik_dynamic.toml
-      - ./traefik/acme.json:/acme.json
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - web
-  webserver:
-    image: nginx:alpine
-    volumes:
-      - ./nginx/pages:/var/www
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    networks:
-      - interal
-    labels:
-      - traefik.http.routers.webserver.rule=Host(`sensors.hadam.us`)
-      - traefik.http.routers.webserver.tls=true
-      - traefik.http.routers.webserver.tls.certresolver=lets-encrypt
-      - traefik.port=80
+      - ./.env.prod
+
 volumes:
   postgres_data:

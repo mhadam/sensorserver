@@ -1,10 +1,5 @@
-{
-  debug
-}
+sensors.hadam.us
 
-localhost
-
-tls /certs/localhost.pem /certs/localhost-key.pem
 root * /srv
 @fastapi {
   path /api/* /docs /openapi.json
