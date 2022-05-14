@@ -15,7 +15,7 @@ services:
       context: ./app
       dockerfile: Dockerfile
     env_file:
-      - ./.env.app
+      - ./.env.prod
     volumes:
       - ./app:/app/
     depends_on:
