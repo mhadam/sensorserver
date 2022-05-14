@@ -12,9 +12,8 @@ from app.db.tables import Base
 from app.db.tables.users import Users
 from app.models.user import UserDB
 
-DB_URL = f"{DATABASE_URL}_test" if os.environ.get("TESTING") else str(DATABASE_URL)
 
-database = databases.Database("postgresql" + DB_URL.lstrip("postgresql+asyncpg"))
+database = databases.Database("postgresql" + DATABASE_URL.render_as_string().lstrip("postgresql+asyncpg"))
 
 engine = create_async_engine(DATABASE_URL)
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
