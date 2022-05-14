@@ -1,8 +1,6 @@
 /caddy/caddy.log
-traefik/letsencrypt/
 .env.app.prod
 .env
-traefik/acme.json
 /caddy/certs/localhost.pem
 /caddy/certs/localhost-key.pem
 
