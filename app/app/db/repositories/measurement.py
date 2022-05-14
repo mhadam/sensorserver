@@ -17,6 +17,11 @@ class MeasurementRepository(CRDBase[AirMeasurement, AirMeasurementCreate]):
     All database actions associated with the Measurement resource
     """
 
+    async def get_devices(self) -> List[str]:
+        query = select([Measurements.device_id]).distinct()
+        result = await self.db.execute(statement=query)
+        return result.scalars().all()
+
     async def get_measurements(
         self,
         device_id: Optional[str] = None,

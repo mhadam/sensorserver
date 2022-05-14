@@ -1,5 +1,16 @@
 {% extends 'base.html' %}
 
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="/css/graphs.css">
+{% endblock %}
+
 {% block content %}
-<img src='/htmx/graphs/e4e79f'>
+<div class="container">
+    <div hx-get="/htmx/graphs/choices" hx-target="#choices" hx-swap="innerHTML" hx-trigger="load, every 10s">
+        <div id="choices"></div>
+        <img class="htmx-indicator" src="/loader/ball-triangle.svg"/>
+    </div>
+    <img class="htmx-indicator" src="/loader/ball-triangle.svg"/>
+    <div id="images"></div>
+</div>
 {% endblock %}

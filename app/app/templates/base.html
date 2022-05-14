@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}sensorserver{% endblock %}</title>
-    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+<!--    <script src="https://unpkg.com/htmx.org@1.6.1"></script>-->
+    <script src="https://unpkg.com/htmx.org@1.6.1/dist/htmx.js"></script>
     <script src="https://unpkg.com/hyperscript.org@0.9.4"></script>
     <script src="https://unpkg.com/hyperscript.org@0.9.4/dist/hdb.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/normalize.css">
     <link rel="stylesheet" type="text/css" href="/css/base.css">
+    {% block stylesheets %}
+    {% endblock %}
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
