@@ -13,7 +13,7 @@ from app.db.tables import Base
 from app.db.tables.users import Users
 from app.models.user import UserDB
 
-normalized_scheme_url = "postgresql" + DATABASE_URL.render_as_string().lstrip("postgresql+asyncpg")
+normalized_scheme_url = "postgresql" + DATABASE_URL.render_as_string(hide_password=False).lstrip("postgresql+asyncpg")
 database = databases.Database(normalized_scheme_url)
 
 engine = create_async_engine(DATABASE_URL)
