@@ -1,8 +1,10 @@
-sensors.hadam.us
+sensors.hadam.us {
+    @fastapi {
+      path *
+    }
+    reverse_proxy @fastapi api:80
 
-root * /srv
-@fastapi {
-  path /api/* /docs /openapi.json
+    file_server {
+        root /srv
+    }
 }
-reverse_proxy @fastapi api:80
-file_server
