@@ -5,7 +5,7 @@ import sys
 from logging.config import fileConfig
 
 import alembic
-from app.core.config import DATABASE_URL, POSTGRES_DB  # noqa
+from app.core.config import DATABASE_URL, POSTGRES_DB, UNQUOTED_DATABASE_URL  # noqa
 from sqlalchemy import create_engine, pool, engine_from_config
 
 base_dir = str(pathlib.Path(__file__).resolve().parent.parent)  # db module
@@ -26,16 +26,15 @@ def run_migrations_online() -> None:
     """
     Run migrations in 'online' mode
     """
-    DB_URL = f"{DATABASE_URL}_test" if os.environ.get("TESTING") else str(DATABASE_URL)
-    DB_URL = "postgresql" + DB_URL.lstrip("postgresql+asyncpg")
+    db_url = "postgresql" + UNQUOTED_DATABASE_URL.lstrip("postgresql+asyncpg")
     if os.environ.get("TESTING"):
-        default_engine = create_engine(str(DATABASE_URL), isolation_level="AUTOCOMMIT")
+        default_engine = create_engine(str(UNQUOTED_DATABASE_URL), isolation_level="AUTOCOMMIT")
         with default_engine.connect() as default_conn:
             default_conn.execute(f"DROP DATABASE IF EXISTS {POSTGRES_DB}_test")
             default_conn.execute(f"CREATE DATABASE {POSTGRES_DB}_test")
 
     connectable = config.attributes.get("connection")
-    config.set_main_option("sqlalchemy.url", DB_URL)
+    config.set_main_option("sqlalchemy.url", db_url)
 
     if connectable is None:
         connectable = engine_from_config(

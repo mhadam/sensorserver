@@ -33,3 +33,4 @@ POSTGRES_DB = config("POSTGRES_DB", cast=str)
 if os.environ.get("TESTING"):
     POSTGRES_DB += "_test"
 DATABASE_URL = URL.create("postgresql+asyncpg", POSTGRES_USER, quote(str(POSTGRES_PASSWORD), safe=''), POSTGRES_SERVER, POSTGRES_PORT, POSTGRES_DB)
+UNQUOTED_DATABASE_URL = URL.create("postgresql+asyncpg", POSTGRES_USER, str(POSTGRES_PASSWORD), POSTGRES_SERVER, POSTGRES_PORT, POSTGRES_DB)
