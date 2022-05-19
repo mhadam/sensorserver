@@ -3,9 +3,9 @@ import asyncio
 import typer
 from fastapi_users.models import BaseUserDB
 
-from app.api.dependencies.auth import fastapi_users
 from app.api.dependencies.db import async_session
-from app.db.database import database
+from app.core.auth import get_user_manager
+from app.db.database import database, get_async_session, get_user_db
 from app.db.repositories.device_auth import DeviceAuthRepository
 from app.db.repositories.device_request import DeviceRequestRepository
 from app.db.tables.device_auth import DeviceAuth as DeviceAuthTable
@@ -17,7 +17,10 @@ app = typer.Typer()
 
 async def get_user(email: str) -> BaseUserDB:
     await database.connect()
-    user: BaseUserDB = await fastapi_users.get_user_manager().get_by_email(email)
+    session = await get_async_session().__anext__()
+    user_db = await get_user_db(session).__anext__()
+    manager = await get_user_manager(user_db).__anext__()
+    user: BaseUserDB = await manager.get_by_email(email)
     await database.disconnect()
     return user
 

@@ -4,8 +4,8 @@ from typing import Optional
 import typer
 from fastapi_users.models import BaseUserCreate
 
-from app.api.dependencies.auth import fastapi_users
-from app.db.database import database
+from app.core.auth import get_user_manager
+from app.db.database import database, get_user_db, get_async_session
 
 app = typer.Typer()
 
@@ -42,7 +42,10 @@ def new_user(
             is_superuser=is_superuser,
             is_verified=is_verified,
         )
-        await fastapi_users.get_user_manager().create(create)
+        session = await get_async_session().__anext__()
+        user_db = await get_user_db(session).__anext__()
+        manager = await get_user_manager(user_db).__anext__()
+        await manager.create(create)
         await database.disconnect()
 
     asyncio.run(_main())
