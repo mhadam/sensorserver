@@ -5,10 +5,9 @@ Revises:
 Create Date: 2021-09-25 20:26:11.699050
 
 """
+import fastapi_users_db_sqlalchemy
 from alembic import op
 import sqlalchemy as sa
-
-import fastapi_users.db
 
 # revision identifiers, used by Alembic
 
@@ -108,7 +107,7 @@ def upgrade():
     create_updated_at_trigger()
     op.create_table(
         "users",
-        sa.Column("id", fastapi_users.db.sqlalchemy.GUID(), nullable=False),
+        sa.Column("id", fastapi_users_db_sqlalchemy.GUID(), nullable=False),
         sa.Column("email", sa.String(length=320), nullable=False),
         sa.Column("hashed_password", sa.String(length=72), nullable=False),
         sa.Column("is_active", sa.Boolean(), nullable=False),
@@ -133,7 +132,7 @@ def upgrade():
         "device_auth",
         sa.Column("id", sa.BigInteger(), nullable=False),
         sa.Column("device_id", sa.Text(), nullable=False),
-        sa.Column("user_id", fastapi_users.db.sqlalchemy.GUID(), nullable=False),
+        sa.Column("user_id", fastapi_users_db_sqlalchemy.GUID(), nullable=False),
         sa.Column("ip_address", sa.Text(), nullable=False),
         sa.Column(
             "created_at",
