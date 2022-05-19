@@ -42,7 +42,7 @@ def new_user(
             is_superuser=is_superuser,
             is_verified=is_verified,
         )
-        await fastapi_users.create_user(create)
+        await fastapi_users.get_user_manager().create(create)
         await database.disconnect()
 
     asyncio.run(_main())

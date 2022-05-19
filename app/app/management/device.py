@@ -17,7 +17,7 @@ app = typer.Typer()
 
 async def get_user(email: str) -> BaseUserDB:
     await database.connect()
-    user: BaseUserDB = await fastapi_users.get_user(email)
+    user: BaseUserDB = await fastapi_users.get_user_manager().get_by_email(email)
     await database.disconnect()
     return user
 
