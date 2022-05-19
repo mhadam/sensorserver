@@ -20,13 +20,17 @@ from app.models.user import User
 router = APIRouter(prefix="/graphs")
 
 
-Image = namedtuple('Image', ['src'])
-Device = namedtuple('Device', ['value', 'text'])
+Image = namedtuple("Image", ["src"])
+Device = namedtuple("Device", ["value", "text"])
 
 
-async def create_graph(db: AsyncSession, device_id: str, before: datetime = None, after: datetime = None) -> BytesIO:
+async def create_graph(
+    db: AsyncSession, device_id: str, before: datetime = None, after: datetime = None
+) -> BytesIO:
     repo = MeasurementRepository(MeasurementsTable, db)
-    measurements = await repo.get_measurements(device_id=device_id, limit=None, after=after, before=before)
+    measurements = await repo.get_measurements(
+        device_id=device_id, limit=None, after=after, before=before
+    )
     fig = plt.figure()
     ax = fig.add_subplot(axes_class=AxesZero)
     data = [m.__dict__ for m in measurements if m.co2 > 0]
@@ -39,9 +43,7 @@ async def create_graph(db: AsyncSession, device_id: str, before: datetime = None
 
 
 @router.get(
-    "/image/{device_id}",
-    name="device:get-measurements",
-    response_class=FileResponse
+    "/image/{device_id}", name="device:get-measurements", response_class=FileResponse
 )
 async def requests_table(
     device_id: str,
@@ -52,11 +54,7 @@ async def requests_table(
     return StreamingResponse(graph, media_type="image/png")
 
 
-@router.get(
-    "/image",
-    name="device:get-measurements",
-    response_class=FileResponse
-)
+@router.get("/image", name="device:get-measurements", response_class=FileResponse)
 async def requests_table(
     device: str,
     db: AsyncSession = Depends(get_session),
@@ -66,28 +64,19 @@ async def requests_table(
     return StreamingResponse(graph, media_type="image/png")
 
 
-@router.get(
-    "/element",
-    name="device:get-graphs",
-    response_class=HTMLResponse
-)
+@router.get("/element", name="device:get-graphs", response_class=HTMLResponse)
 async def requests_table(
     device: str,
     request: Request,
     _: User = Depends(current_user),
 ):
-    images = [Image(f'/htmx/graphs/image/{device}')]
-    return templates.TemplateResponse("image.html", {
-        "request": request,
-        "images": images
-    })
+    images = [Image(f"/htmx/graphs/image/{device}")]
+    return templates.TemplateResponse(
+        "image.html", {"request": request, "images": images}
+    )
 
 
-@router.get(
-    "/choices",
-    name="device:get-choices",
-    response_class=HTMLResponse
-)
+@router.get("/choices", name="device:get-choices", response_class=HTMLResponse)
 async def choices(
     request: Request,
     _: User = Depends(current_user),
@@ -96,7 +85,6 @@ async def choices(
     repo = MeasurementRepository(MeasurementsTable, db)
     devices_ids = await repo.get_devices()
     devices = [Device(d, d) for d in devices_ids]
-    return templates.TemplateResponse("choices.html", {
-        "request": request,
-        "choices": devices
-    })
+    return templates.TemplateResponse(
+        "choices.html", {"request": request, "choices": devices}
+    )

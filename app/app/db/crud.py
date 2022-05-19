@@ -29,7 +29,9 @@ class CRDBase(Generic[ModelType, CreateSchemaType]):
         result = await self.db.execute(query)
         return result.scalars().one()
 
-    async def get_multi(self, skip: int = 0, limit: int = 100, sort_recent: bool = False) -> List[ModelType]:
+    async def get_multi(
+        self, skip: int = 0, limit: int = 100, sort_recent: bool = False
+    ) -> List[ModelType]:
         statement = select(self.model).offset(skip).limit(limit)
         if sort_recent:
             statement = statement.order_by(self.model.created_at.desc())

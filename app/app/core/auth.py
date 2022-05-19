@@ -3,7 +3,11 @@ from urllib.request import Request
 
 from fastapi import Depends
 from fastapi_users import BaseUserManager
-from fastapi_users.authentication import AuthenticationBackend, CookieTransport, JWTStrategy
+from fastapi_users.authentication import (
+    AuthenticationBackend,
+    CookieTransport,
+    JWTStrategy,
+)
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
 from app.core.config import SECRET_KEY

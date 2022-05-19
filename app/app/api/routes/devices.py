@@ -30,7 +30,10 @@ from app.models.measurements import (
     AirMeasurementCreateBody,
 )
 from app.models.user import User
-from app.services.authentication import create_access_token_for_device, get_device_id_from_token
+from app.services.authentication import (
+    create_access_token_for_device,
+    get_device_id_from_token,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +93,9 @@ async def get_device_measurements(
 
 
 def get_ip_address(request: Request) -> ipaddress.IPv4Address:
-    return ipaddress.IPv4Address(request.headers.get('x-forwarded-host', request.client.host))
+    return ipaddress.IPv4Address(
+        request.headers.get("x-forwarded-host", request.client.host)
+    )
 
 
 @router.get(
@@ -139,7 +144,9 @@ async def approve_request(
     if maybe_request is not None:
         auth_repo = DeviceAuthRepository(DeviceAuthTable, db)
         obj_in = DeviceAuthCreate(
-            device_id=maybe_request.device_id, ip_address=maybe_request.ip_address, user_id=user.id
+            device_id=maybe_request.device_id,
+            ip_address=maybe_request.ip_address,
+            user_id=user.id,
         )
         try:
             await auth_repo.create(obj_in)

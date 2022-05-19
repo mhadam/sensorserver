@@ -26,9 +26,13 @@ def run_migrations_online() -> None:
     """
     Run migrations in 'online' mode
     """
-    db_url = "postgresql" + str(UNQUOTED_DATABASE_URL).replace('%', '%%').lstrip("postgresql+asyncpg")
+    db_url = "postgresql" + str(UNQUOTED_DATABASE_URL).replace("%", "%%").lstrip(
+        "postgresql+asyncpg"
+    )
     if os.environ.get("TESTING"):
-        default_engine = create_engine(str(UNQUOTED_DATABASE_URL), isolation_level="AUTOCOMMIT")
+        default_engine = create_engine(
+            str(UNQUOTED_DATABASE_URL), isolation_level="AUTOCOMMIT"
+        )
         with default_engine.connect() as default_conn:
             default_conn.execute(f"DROP DATABASE IF EXISTS {POSTGRES_DB}_test")
             default_conn.execute(f"CREATE DATABASE {POSTGRES_DB}_test")

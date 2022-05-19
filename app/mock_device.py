@@ -9,23 +9,15 @@ def get_authorization(api_url, device_id) -> Optional[str]:
     authorize_url = api_url + f"/devices/{device_id}:knock"
     response = requests.get(authorize_url)
     try:
-        return response.headers['Authorization']
+        return response.headers["Authorization"]
     except KeyError:
         pass
 
 
 def send_measurement(api_url, token, device_id) -> Response:
     measure_url = api_url + f"/devices/{device_id}:measure"
-    measurement = {
-        "rco2": 5,
-        "atmp": 5,
-        "pm02": 5,
-        "rhum": 5,
-        "wifi": 5
-    }
-    headers = {
-        "Authorization": token
-    }
+    measurement = {"rco2": 5, "atmp": 5, "pm02": 5, "rhum": 5, "wifi": 5}
+    headers = {"Authorization": token}
     response = requests.post(measure_url, json=measurement, headers=headers)
     return response
 

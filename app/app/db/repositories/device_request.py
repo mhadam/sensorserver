@@ -32,9 +32,7 @@ class DeviceRequestRepository(
 
     async def get_device(self, device_id: str) -> Optional[DeviceRequest]:
         model = self.model
-        query = select(model).filter(
-            model.device_id == device_id
-        )
+        query = select(model).filter(model.device_id == device_id)
         result = await self.db.execute(query)
         return DeviceRequest.from_orm(result.scalars().first())
 

@@ -84,13 +84,17 @@ def create_access_token_for_device(
     return access_token
 
 
-def get_device_id_from_token(token: str, secret_key: str = str(SECRET_KEY)) -> Optional[str]:
+def get_device_id_from_token(
+    token: str, secret_key: str = str(SECRET_KEY)
+) -> Optional[str]:
     decoded = _decode_token(token, secret_key)
     payload = DeviceJWTPayload(**decoded)
     return payload.device_id
 
 
-def get_email_from_token(token: str, secret_key: str = str(SECRET_KEY)) -> Optional[str]:
+def get_email_from_token(
+    token: str, secret_key: str = str(SECRET_KEY)
+) -> Optional[str]:
     decoded = _decode_token(token, secret_key)
     payload = JWTPayload(**decoded)
     return payload.sub

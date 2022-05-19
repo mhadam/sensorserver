@@ -23,14 +23,8 @@ async def get_user(email: str) -> BaseUserDB:
 
 
 @app.command()
-def approve_device(
-    device_id: str,
-    email: str
-):
-    data = {
-        "device_id": device_id,
-        "email": email
-    }
+def approve_device(device_id: str, email: str):
+    data = {"device_id": device_id, "email": email}
     typer.echo(f"Added auth")
     typer.echo(f"=======")
     for key, value in data.items():
@@ -43,11 +37,13 @@ def approve_device(
             if device:
                 user = await get_user(email)
                 auth_repo = DeviceAuthRepository(DeviceAuthTable, session)
-                obj = DeviceAuthCreate(**{
-                    "device_id": device_id,
-                    "ip_address": device.ip_address,
-                    "user_id": user.id
-                })
+                obj = DeviceAuthCreate(
+                    **{
+                        "device_id": device_id,
+                        "ip_address": device.ip_address,
+                        "user_id": user.id,
+                    }
+                )
                 _ = await auth_repo.create(obj)
             await database.disconnect()
 
