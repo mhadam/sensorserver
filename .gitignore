@@ -1,5 +1,6 @@
 /caddy/caddy.log
 .env.app.prod
+.env.prod
 .env
 /caddy/certs/localhost.pem
 /caddy/certs/localhost-key.pem
