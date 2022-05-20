@@ -2,11 +2,10 @@ from ipaddress import IPv4Address
 from typing import Optional
 
 from sqlalchemy import select
-from sqlalchemy.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.exc import MultipleResultsFound
 
 from app.db.crud import CRUDBase
 from app.db.tables.device_auth import DeviceAuth as DeviceAuthTable
-
 from app.models.device_auth import DeviceAuthCreate, DeviceAuthUpdate, DeviceAuth
 
 
