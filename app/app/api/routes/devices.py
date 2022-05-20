@@ -92,10 +92,18 @@ async def get_device_measurements(
     )
 
 
+def get_address(s):
+    out = s.rsplit(":", 1)
+    try:
+        out[1] = int(out[1])
+    except (IndexError, ValueError):
+        pass
+    return out[0]
+
+
 def get_ip_address(request: Request) -> ipaddress.IPv4Address:
-    return ipaddress.IPv4Address(
-        request.headers.get("x-forwarded-for", request.client.host)
-    )
+    value = request.headers.get("x-forwarded-for", request.client.host)
+    return ipaddress.IPv4Address(get_address(value))
 
 
 @router.get(
