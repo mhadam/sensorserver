@@ -1,8 +1,26 @@
-sensors.hadam.us {
+{
+    auto_https off
+}
+
+(theheaders) {
+    header_up X-Forwarded-Ssl on
+    header_up Host {host}
+    header_up X-Real-IP {remote}
+    header_up X-Forwarded-For {remote}
+    header_up X-Forwarded-Port {server_port}
+    header_up X-Forwarded-Proto {scheme}
+    header_up X-Url-Scheme {scheme}
+    header_up X-Forwarded-Host {host}
+}
+
+http://sensors.hadam.us {
     @fastapi {
       path *
     }
-    reverse_proxy @fastapi api:80
+
+    reverse_proxy @fastapi api:80 {
+        import theheaders
+    }
 
     file_server {
         root /srv
