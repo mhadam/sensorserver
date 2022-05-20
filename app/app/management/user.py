@@ -5,7 +5,10 @@ import typer
 from fastapi_users.models import BaseUserCreate
 
 from app.core.auth import get_user_manager
-from app.db.database import get_user_db, get_async_session, test_connection
+from app.db.database import get_user_db, get_async_session
+
+from app.db.tables import *  # needed for registering sqlalchemy tables
+
 
 app = typer.Typer()
 
@@ -41,11 +44,11 @@ def new_user(
             is_superuser=is_superuser,
             is_verified=is_verified,
         )
-        await test_connection()
-        print("tested connection")
+        await asyncio.sleep(0.1)  # avoids deadlock
         session = await get_async_session().__anext__()
         user_db = await get_user_db(session).__anext__()
         manager = await get_user_manager(user_db).__anext__()
+        await asyncio.sleep(0.1)  # avoids deadlock
         await manager.create(create)
 
     asyncio.run(_main())
