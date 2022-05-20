@@ -6,12 +6,12 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from app.core.config import UNQUOTED_DATABASE_URL
+from app.core.config import UNQUOTED_DATABASE_URL, DATABASE_URL
 from app.db.tables import Base
 from app.db.tables.users import Users
 from app.models.user import UserDB
 
-normalized_scheme_url = "postgresql" + UNQUOTED_DATABASE_URL.render_as_string(
+normalized_scheme_url = "postgresql" + DATABASE_URL.render_as_string(
     hide_password=False
 ).lstrip("postgresql+asyncpg")
 database = databases.Database(normalized_scheme_url)
