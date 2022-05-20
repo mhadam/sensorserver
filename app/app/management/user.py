@@ -5,7 +5,7 @@ import typer
 from fastapi_users.models import BaseUserCreate
 
 from app.core.auth import get_user_manager
-from app.db.database import database, get_user_db, get_async_session
+from app.db.database import get_user_db, get_async_session
 
 app = typer.Typer()
 
@@ -34,7 +34,6 @@ def new_user(
             typer.echo(f"{key}:{value}")
 
     async def _main():
-        await database.connect()
         create = BaseUserCreate(
             email=email,
             password=password,
@@ -46,7 +45,6 @@ def new_user(
         user_db = await get_user_db(session).__anext__()
         manager = await get_user_manager(user_db).__anext__()
         await manager.create(create)
-        await database.disconnect()
 
     asyncio.run(_main())
 
