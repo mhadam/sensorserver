@@ -14,7 +14,7 @@ from app.core.config import SECRET_KEY
 from app.db.database import get_user_db
 from app.models.user import UserCreate, UserDB
 
-cookie_transport = CookieTransport(cookie_max_age=3600)
+cookie_transport = CookieTransport(cookie_max_age=3600, cookie_secure=False)
 
 
 def get_jwt_strategy() -> JWTStrategy:
