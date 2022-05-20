@@ -94,7 +94,7 @@ async def get_device_measurements(
 
 def get_ip_address(request: Request) -> ipaddress.IPv4Address:
     return ipaddress.IPv4Address(
-        request.headers.get("x-forwarded-host", request.client.host)
+        request.headers.get("x-forwarded-for", request.client.host)
     )
 
 
