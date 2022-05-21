@@ -1,5 +1,5 @@
 <label>Device</label>
-<select name="device" hx-get="/htmx/graphs/element" hx-trigger="change, every 60s" hx-target="#images" hx-swap="innerHTML">
+<select name="device" hx-get="/htmx/graphs/element" hx-trigger="load, change, every 60s" hx-target="#images" hx-swap="innerHTML">
 {% for c in choices %}
     <option value="{{c.value}}">{{c.text}}</option>
 {% endfor %}
