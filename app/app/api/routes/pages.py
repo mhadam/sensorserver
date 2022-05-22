@@ -22,3 +22,8 @@ async def index(request: Request):
 @router.get("/devices.html")
 async def index(request: Request):
     return templates.TemplateResponse("devices.html", context={"request": request})
+
+
+@router.get("/current.html")
+async def current(request: Request):
+    return templates.TemplateResponse("current.html", context={"request": request})

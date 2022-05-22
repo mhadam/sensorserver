@@ -1,3 +1,4 @@
+.DS_Store
 /caddy/caddy.log
 .env.app.prod
 .env.prod

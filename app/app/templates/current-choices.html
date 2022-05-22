@@ -1,0 +1,6 @@
+<label>Device</label>
+<select name="device" hx-get="/htmx/current/reading" hx-trigger="load, change, every 10s" hx-target="#readings" hx-swap="beforeend">
+{% for c in choices %}
+    <option value="{{c.value}}">{{c.text}}</option>
+{% endfor %}
+</select>
