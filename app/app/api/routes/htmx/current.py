@@ -35,13 +35,13 @@ async def choices(
 
 @router.get("/reading", name="device:reading", response_class=HTMLResponse)
 async def reading(
-    device_id: str,
+    device: str,
     request: Request,
     _: User = Depends(current_user),
     db: AsyncSession = Depends(get_session),
 ):
     repo = MeasurementRepository(MeasurementsTable, db)
-    measurement = await repo.get_measurements(device_id=device_id, limit=1)
+    measurement = await repo.get_measurements(device_id=device, limit=1)
     if len(measurement) != 1:
         return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return templates.TemplateResponse(
