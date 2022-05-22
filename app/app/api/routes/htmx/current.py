@@ -2,8 +2,9 @@ from collections import namedtuple
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 from starlette.requests import Request
-from starlette.responses import HTMLResponse
+from starlette.responses import HTMLResponse, Response
 
 from app.api.dependencies.db import get_session
 from app.api.dependencies.files import templates
@@ -41,6 +42,8 @@ async def reading(
 ):
     repo = MeasurementRepository(MeasurementsTable, db)
     measurement = await repo.get_measurements(device_id=device_id, limit=1)
+    if len(measurement) != 1:
+        return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return templates.TemplateResponse(
-        "reading.html", {"request": request, "reading": measurement}
+        "reading.html", {"request": request, "reading": measurement[0]}
     )
