@@ -1,5 +1,6 @@
 from collections import namedtuple
 from datetime import datetime, timedelta
+from enum import Enum, unique
 from io import BytesIO
 
 import matplotlib.pyplot as plt
@@ -24,8 +25,16 @@ Image = namedtuple("Image", ["src"])
 Device = namedtuple("Device", ["value", "text"])
 
 
+@unique
+class Metric(Enum):
+    CO2 = "co2"
+    TEMP = "temperature"
+    PM2_5 = "pm2_5"
+    HUMID = "humidity"
+
+
 async def create_graph(
-    db: AsyncSession, device_id: str, before: datetime = None, after: datetime = None
+    db: AsyncSession, device_id: str, measurement_type: Metric, before: datetime = None, after: datetime = None
 ) -> BytesIO:
     repo = MeasurementRepository(MeasurementsTable, db)
     measurements = await repo.get_measurements(
@@ -33,9 +42,9 @@ async def create_graph(
     )
     fig = plt.figure()
     ax = fig.add_subplot(axes_class=AxesZero)
-    data = [m.__dict__ for m in measurements if m.co2 > 0]
+    data = [m.__dict__ for m in measurements]
     df = pd.DataFrame(data)
-    df.plot(x="created_at", y="co2")
+    df.plot(x="created_at", y=measurement_type.value)
     bio = BytesIO()
     plt.savefig(bio)
     bio.seek(0)
@@ -47,20 +56,22 @@ async def create_graph(
 )
 async def requests_table(
     device_id: str,
+    metric: Metric,
     db: AsyncSession = Depends(get_session),
     _: User = Depends(current_user),
 ):
-    graph = await create_graph(db, device_id, after=datetime.now() - timedelta(days=1))
+    graph = await create_graph(db, device_id, metric, after=datetime.now() - timedelta(days=1))
     return StreamingResponse(graph, media_type="image/png")
 
 
 @router.get("/image", name="device:get-measurements", response_class=FileResponse)
 async def requests_table(
     device: str,
+    metric: Metric,
     db: AsyncSession = Depends(get_session),
     _: User = Depends(current_user),
 ):
-    graph = await create_graph(db, device, after=datetime.now() - timedelta(days=1))
+    graph = await create_graph(db, device, metric, after=datetime.now() - timedelta(days=1))
     return StreamingResponse(graph, media_type="image/png")
 
 
