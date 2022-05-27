@@ -44,6 +44,7 @@ async def create_graph(
     ax = fig.add_subplot(axes_class=AxesZero)
     data = [m.__dict__ for m in measurements]
     df = pd.DataFrame(data)
+    df["temperature"] = pd.to_numeric(df["temperature"])
     df.plot(x="created_at", y=measurement_type.value)
     bio = BytesIO()
     plt.savefig(bio)
