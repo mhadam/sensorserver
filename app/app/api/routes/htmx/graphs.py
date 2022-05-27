@@ -21,7 +21,7 @@ from app.models.user import User
 router = APIRouter(prefix="/graphs")
 
 
-Image = namedtuple("Image", ["src"])
+Image = namedtuple("Image", ["src", "metric"])
 Device = namedtuple("Device", ["value", "text"])
 
 
@@ -78,10 +78,11 @@ async def requests_table(
 @router.get("/element", name="device:get-graphs", response_class=HTMLResponse)
 async def requests_table(
     device: str,
+    metric: str,
     request: Request,
     _: User = Depends(current_user),
 ):
-    images = [Image(f"/htmx/graphs/image/{device}")]
+    images = [Image(f"/htmx/graphs/image/{device}", metric)]
     return templates.TemplateResponse(
         "image.html", {"request": request, "images": images}
     )
