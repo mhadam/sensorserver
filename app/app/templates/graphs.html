@@ -26,7 +26,7 @@
     <img class="htmx-indicator" src="/loader/ball-triangle.svg"/>
     <div id="images" hx-get="/htmx/graphs/element"
          hx-trigger="afterSwap from:#choices-result, change from:[name='device'], change from:[name='metric']"
-         hx-sync="#choices:queue all"
+<!--         hx-sync="#choices:queue all"-->
          hx-swap="innerHTML" hx-include="[name='metric'],[name='device']"></div>
 </div>
 {% endblock %}
