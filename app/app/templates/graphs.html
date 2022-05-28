@@ -9,9 +9,9 @@
     <div>
         <label>Metric</label>
         <select name="metric">
-            <option value="co2">CO<sub>2</sub></option>
+            <option value="co2">CO2</option>
             <option value="humidity">Humidity</option>
-            <option value="pm2_5">PM<sub>2.5</sub></option>
+            <option value="pm2_5">PM2.5</option>
             <option value="temperature">Temperature</option>
         </select>
     </div>
@@ -21,7 +21,7 @@
     </div>
     <img class="htmx-indicator" src="/loader/ball-triangle.svg"/>
     <div id="images" hx-get="/htmx/graphs/element"
-         hx-trigger="change from:[name='device'], change from:[name='metric']"
+         hx-trigger="afterSettle from:#choices, change from:[name='device'], change from:[name='metric']"
          hx-swap="innerHTML" hx-include="[name='metric'],[name='device']"></div>
 </div>
 {% endblock %}
