@@ -15,13 +15,18 @@
             <option value="temperature">Temperature</option>
         </select>
     </div>
-    <div hx-get="/htmx/graphs/choices" hx-target="#choices" hx-swap="innerHTML" hx-trigger="load, every 10s">
-        <div id="choices"></div>
+    <div id="choices"
+         hx-get="/htmx/graphs/choices"
+         hx-target="#choices-result"
+         hx-swap="innerHTML"
+         hx-trigger="load, every 10s">
+        <div id="choices-result"></div>
         <img class="htmx-indicator" src="/loader/ball-triangle.svg"/>
     </div>
     <img class="htmx-indicator" src="/loader/ball-triangle.svg"/>
     <div id="images" hx-get="/htmx/graphs/element"
-         hx-trigger="load delay 100ms, change from:[name='device'], change from:[name='metric']"
+         hx-trigger="load delay 500ms, change from:[name='device'], change from:[name='metric']"
+         hx-sync="#choices:queue last"
          hx-swap="innerHTML" hx-include="[name='metric'],[name='device']"></div>
 </div>
 {% endblock %}
