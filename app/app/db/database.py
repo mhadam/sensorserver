@@ -16,7 +16,7 @@ normalized_scheme_url = "postgresql" + DATABASE_URL.render_as_string(
 ).lstrip("postgresql+asyncpg")
 database = databases.Database(normalized_scheme_url)
 
-engine = create_async_engine(UNQUOTED_DATABASE_URL,  connect_args={"options": "-c timezone=est"})
+engine = create_async_engine(UNQUOTED_DATABASE_URL,  connect_args={"timezone": "est"})
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
