@@ -1,15 +1,5 @@
 services:
 
-  reverse-proxy:
-    image: caddy:latest
-    volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ./caddy/pages:/srv
-      - ./caddy/certs:/certs
-    ports:
-      - 80:80
-      - 443:443
-
   api:
     build:
       context: ./app
@@ -31,3 +21,8 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  default:
+    name: server
+    external: true
