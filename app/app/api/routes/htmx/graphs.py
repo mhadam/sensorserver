@@ -36,7 +36,7 @@ class Metric(Enum):
 
 async def create_graph(
     db: AsyncSession, device_id: str, measurement_type: Metric, before: datetime = None, after: datetime = None
-) -> BytesIO:
+):
     repo = MeasurementRepository(MeasurementsTable, db)
     measurements = await repo.get_measurements(
         device_id=device_id, limit=None, after=after, before=before
@@ -55,7 +55,7 @@ async def create_graph(
 
 
 @router.get(
-    "/image/{device_id}", name="device:get-measurements", response_class=FileResponse
+    "/image/{device_id}", name="device:get-measurements"
 )
 async def requests_table(
     device_id: str,
@@ -67,7 +67,7 @@ async def requests_table(
     return StreamingResponse(graph, media_type="image/png")
 
 
-@router.get("/image", name="device:get-measurements", response_class=FileResponse)
+@router.get("/image", name="device:get-measurements")
 async def requests_table(
     device: str,
     metric: Metric,
