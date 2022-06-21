@@ -1,3 +1,4 @@
+import contextlib
 from collections import namedtuple
 from datetime import datetime, timedelta
 from enum import Enum, unique
@@ -48,6 +49,7 @@ async def create_graph(
     df.plot(x="created_at", y=measurement_type.value)
     bio = BytesIO()
     plt.savefig(bio)
+    plt.close(fig)
     bio.seek(0)
     return bio
 
