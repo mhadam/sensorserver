@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends
 from mpl_toolkits.axisartist import AxesZero
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
-from starlette.responses import FileResponse, StreamingResponse, HTMLResponse
+from starlette.responses import Response, FileResponse, StreamingResponse, HTMLResponse
 
 from app.api.dependencies.db import get_session
 from app.api.dependencies.files import templates
@@ -64,9 +64,10 @@ async def requests_table(
     metric: Metric,
     db: AsyncSession = Depends(get_session),
     _: User = Depends(current_user),
+    response_class=Response,
 ):
     graph = await create_graph(db, device_id, metric, after=datetime.now() - timedelta(days=1))
-    return StreamingResponse(graph, media_type="image/png")
+    return Response(graph, media_type="image/png")
 
 
 @router.get("/image", name="device:get-measurements")
@@ -75,9 +76,10 @@ async def requests_table(
     metric: Metric,
     db: AsyncSession = Depends(get_session),
     _: User = Depends(current_user),
+    response_class=Response,
 ):
     graph = await create_graph(db, device, metric, after=datetime.now() - timedelta(days=1))
-    return StreamingResponse(graph, media_type="image/png")
+    return Response(graph, media_type="image/png")
 
 
 @router.get("/element", name="device:get-graphs", response_class=HTMLResponse)
