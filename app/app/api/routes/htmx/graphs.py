@@ -36,7 +36,7 @@ class Metric(Enum):
 
 async def create_graph(
     db: AsyncSession, device_id: str, measurement_type: Metric, before: datetime = None, after: datetime = None
-):
+) -> bytes:
     repo = MeasurementRepository(MeasurementsTable, db)
     measurements = await repo.get_measurements(
         device_id=device_id, limit=None, after=after, before=before
@@ -51,7 +51,9 @@ async def create_graph(
     plt.savefig(bio)
     plt.close(fig)
     bio.seek(0)
-    return bio
+    result = bio.getvalue()
+    bio.close()
+    return result
 
 
 @router.get(
