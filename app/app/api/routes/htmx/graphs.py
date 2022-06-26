@@ -20,7 +20,7 @@ from app.db.repositories.measurement import MeasurementRepository
 from app.db.tables.measurements import Measurements as MeasurementsTable
 from app.models.user import User
 
-matplotlib.use('Agg')
+matplotlib.use('agg')
 
 router = APIRouter(prefix="/graphs")
 
@@ -45,7 +45,7 @@ async def create_graph(
     )
     fig = plt.figure()
     ax = fig.add_subplot(axes_class=AxesZero)
-    data = [m.__dict__ for m in measurements]
+    data = [dict(m.__dict__) for m in measurements]
     df = pd.DataFrame(data)
     df["temperature"] = pd.to_numeric(df["temperature"])
     df.plot(x="created_at", y=measurement_type.value)
