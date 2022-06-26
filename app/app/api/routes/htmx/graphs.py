@@ -19,8 +19,9 @@ from app.db.repositories.measurement import MeasurementRepository
 from app.db.tables.measurements import Measurements as MeasurementsTable
 from app.models.user import User
 
-router = APIRouter(prefix="/graphs")
+matplotlib.use('Agg')
 
+router = APIRouter(prefix="/graphs")
 
 Image = namedtuple("Image", ["src", "metric"])
 Device = namedtuple("Device", ["value", "text"])
