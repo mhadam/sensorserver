@@ -5,6 +5,7 @@ from enum import Enum, unique
 from io import BytesIO
 
 import matplotlib.pyplot as plt
+import matplotlib
 import pandas as pd
 from fastapi import APIRouter, Depends
 from mpl_toolkits.axisartist import AxesZero
