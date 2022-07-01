@@ -7,7 +7,7 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-fastapi = "^0.71.0"
+fastapi = "0.78.0"
 Hypercorn = "^0.11.2"
 bcrypt = "^3.2.0"
 passlib = "^1.7.4"
@@ -15,7 +15,7 @@ alembic = "^1.6.5"
 psycopg2 = "^2.9.1"
 pydantic = {extras = ["email"], version = "^1.8.2"}
 python-multipart = "^0.0.5"
-fastapi-users = {extras = ["sqlalchemy2"], version = "^9.2.1"}
+fastapi-users = {extras = ["sqlalchemy"], version = "^10.1.1"}
 SQLAlchemy = {extras = ["asyncio"], version = "1.4.22"}
 asyncpg = "^0.24.0"
 databases = {extras = ["postgresql"], version = "^0.5.2"}

@@ -9,7 +9,6 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import UNQUOTED_DATABASE_URL, DATABASE_URL
 from app.db.tables import Base
 from app.db.tables.users import Users
-from app.models.user import UserDB
 
 normalized_scheme_url = "postgresql" + DATABASE_URL.render_as_string(
     hide_password=False
@@ -36,4 +35,4 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    yield SQLAlchemyUserDatabase(UserDB, session, Users)
+    yield SQLAlchemyUserDatabase(session, Users)

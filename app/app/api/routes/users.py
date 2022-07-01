@@ -1,12 +1,7 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
-from starlette.responses import Response
+from fastapi import APIRouter
 
 from app.api.dependencies.auth import fastapi_users
-from app.api.dependencies.db import get_session
 from app.core.auth import auth_backend
-from app.models.user import User
 
 current_user = fastapi_users.current_user(active=True)
 
@@ -19,7 +14,7 @@ router.include_router(
 )
 
 router.include_router(
-    fastapi_users.get_users_router(),
+    fastapi_users.get_users_router(UserRead, UserUpdate),
     prefix="/users",
     tags=["users"],
 )

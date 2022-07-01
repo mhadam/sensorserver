@@ -1,10 +1,10 @@
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 from sqlalchemy.orm import relationship
 
 from app.db.tables import Base, timestamps
-from fastapi_users.db import SQLAlchemyBaseUserTable
 
 
-class Users(Base, SQLAlchemyBaseUserTable):
+class Users(SQLAlchemyBaseUserTableUUID, Base):
     __tablename__ = "users"
     __table_args__ = (*timestamps(),)
 

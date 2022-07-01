@@ -18,7 +18,6 @@ from app.api.dependencies.files import templates
 from app.api.routes.devices import current_user
 from app.db.repositories.measurement import MeasurementRepository
 from app.db.tables.measurements import Measurements as MeasurementsTable
-from app.models.user import User
 
 matplotlib.use('agg')
 
@@ -55,6 +54,7 @@ async def create_graph(
     bio.seek(0)
     result = bio.getvalue()
     bio.close()
+    gc.collect()
     return result
 
 
