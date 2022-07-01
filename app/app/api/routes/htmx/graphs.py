@@ -17,6 +17,7 @@ from app.api.dependencies.files import templates
 from app.api.routes.devices import current_user
 from app.db.repositories.measurement import MeasurementRepository
 from app.db.tables.measurements import Measurements as MeasurementsTable
+from app.db.tables.users import Users
 
 matplotlib.use('agg')
 
