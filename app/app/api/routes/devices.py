@@ -45,8 +45,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.post(
-    # "/devices/{device_id}:measure",
-    "/devices/{device_id}/measure",
+    "/devices/{device_id}:measure",
     name="device:create-measurement",
     status_code=status.HTTP_201_CREATED,
 )
@@ -108,8 +107,7 @@ def get_ip_address(request: Request) -> ipaddress.IPv4Address:
 
 
 @router.get(
-    # "/devices/{device_id}:knock",
-    "/devices/{device_id}/knock",
+    "/devices/{device_id}:knock",
     name="device:knock",
     status_code=status.HTTP_200_OK,
 )
@@ -140,8 +138,7 @@ async def device_knock(
 
 
 @router.get(
-    "/requests/{request_id}/approve",
-    # "/requests/{request_id}:approve",
+    "/requests/{request_id}:approve",
     name="requests:approve",
     status_code=status.HTTP_200_OK,
 )
@@ -174,8 +171,7 @@ async def approve_request(
 
 
 @router.get(
-    "/requests/{request_id}/block",
-    # "/requests/{request_id}:block",
+    "/requests/{request_id}:block",
     name="requests:block",
     status_code=status.HTTP_200_OK,
 )
