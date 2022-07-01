@@ -2,7 +2,6 @@ import asyncio
 from typing import Optional
 
 import typer
-from fastapi_users.models import BaseUserCreate
 
 from app.core.auth import get_user_manager
 from app.db.database import get_user_db, get_async_session

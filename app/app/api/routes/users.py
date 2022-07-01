@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.dependencies.auth import fastapi_users
 from app.core.auth import auth_backend
+from app.models.user import UserRead, UserUpdate
 
 current_user = fastapi_users.current_user(active=True)
 

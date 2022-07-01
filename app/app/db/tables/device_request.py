@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, Table, Text, Index, UniqueConstraint
+from sqlalchemy import Column, BigInteger, Table, Text, UniqueConstraint
 
 from app.db.tables import Base, timestamps
 

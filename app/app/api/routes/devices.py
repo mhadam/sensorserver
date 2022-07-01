@@ -21,6 +21,7 @@ from app.db.tables.device_auth import DeviceAuth as DeviceAuthTable
 from app.db.tables.device_block import DeviceBlock as DeviceBlockTable
 from app.db.tables.device_request import DeviceRequest as DeviceRequestTable
 from app.db.tables.measurements import Measurements as MeasurementsTable
+from app.db.tables.users import Users
 from app.models.device_auth import DeviceAuthCreate, DeviceAuth
 from app.models.device_request import DeviceRequest
 from app.models.measurements import (
@@ -29,7 +30,6 @@ from app.models.measurements import (
     AirMeasurement,
     AirMeasurementCreateBody,
 )
-from app.models.user import User
 from app.services.authentication import (
     create_access_token_for_device,
     get_device_id_from_token,
@@ -145,7 +145,7 @@ async def device_knock(
 async def approve_request(
     request_id: int,
     db: AsyncSession = Depends(get_session),
-    user: User = Depends(current_user),
+    user: Users = Depends(current_user),
 ):
     request_repo = DeviceRequestRepository(DeviceRequestTable, db)
     maybe_request = await request_repo.get(request_id)
@@ -178,7 +178,7 @@ async def approve_request(
 async def block_request(
     request_id: int,
     db: AsyncSession = Depends(get_session),
-    user: User = Depends(current_user),
+    user: Users = Depends(current_user),
 ):
     request_repo = DeviceRequestRepository(DeviceRequestTable, db)
     maybe_request = await request_repo.get(request_id)
@@ -208,7 +208,7 @@ async def block_request(
 )
 async def get_requests(
     db: AsyncSession = Depends(get_session),
-    user: User = Depends(current_user),
+    user: Users = Depends(current_user),
 ) -> List[DeviceRequest]:
     request_repo = DeviceRequestRepository(DeviceRequestTable, db)
     result = await request_repo.get_multi(sort_recent=True)
@@ -222,7 +222,7 @@ async def get_requests(
 )
 async def get_approvals(
     db: AsyncSession = Depends(get_session),
-    _: User = Depends(current_user),
+    _: Users = Depends(current_user),
 ) -> List[DeviceAuth]:
     auth_repo = DeviceAuthRepository(DeviceAuthTable, db)
     results = await auth_repo.get_multi(sort_recent=True)

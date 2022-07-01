@@ -11,7 +11,7 @@ from ward import fixture, Scope
 from app.core.config import JWT_TOKEN_PREFIX, SECRET_KEY
 from app.db.repositories.measurement import MeasurementRepository
 from app.db.tables.users import Users
-from app.models.user import UserCreate, UserDB
+from app.models.user import UserCreate
 
 
 @fixture(scope=Scope.Global)
@@ -52,9 +52,8 @@ async def client(app=app) -> AsyncClient:
 
 
 @fixture
-async def user(db=db) -> UserDB:
-    user_table = Users.__table__
-    user_db = SQLAlchemyUserDatabase(UserDB, db, user_table)
+async def user(db=db) -> SQLAlchemyUserDatabase:
+    user_db = SQLAlchemyUserDatabase(db, Users)
     new_user = UserCreate(
         email="lebron@james.io", username="lebronjames", password="heatcavslakers"
     )

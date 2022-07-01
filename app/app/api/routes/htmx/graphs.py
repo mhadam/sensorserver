@@ -1,17 +1,16 @@
-import contextlib
 from collections import namedtuple
 from datetime import datetime, timedelta
 from enum import Enum, unique
 from io import BytesIO
 
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
 import pandas as pd
 from fastapi import APIRouter, Depends
 from mpl_toolkits.axisartist import AxesZero
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
-from starlette.responses import Response, FileResponse, StreamingResponse, HTMLResponse
+from starlette.responses import Response, HTMLResponse
 
 from app.api.dependencies.db import get_session
 from app.api.dependencies.files import templates
@@ -65,7 +64,7 @@ async def requests_table(
     device_id: str,
     metric: Metric,
     db: AsyncSession = Depends(get_session),
-    _: User = Depends(current_user),
+    _: Users = Depends(current_user),
     response_class=Response,
 ):
     graph = await create_graph(db, device_id, metric, after=datetime.now() - timedelta(days=1))
@@ -77,7 +76,7 @@ async def requests_table(
     device: str,
     metric: Metric,
     db: AsyncSession = Depends(get_session),
-    _: User = Depends(current_user),
+    _: Users = Depends(current_user),
     response_class=Response,
 ):
     graph = await create_graph(db, device, metric, after=datetime.now() - timedelta(days=1))
@@ -89,7 +88,7 @@ async def requests_table(
     device: str,
     metric: str,
     request: Request,
-    _: User = Depends(current_user),
+    _: Users = Depends(current_user),
 ):
     images = [Image(f"/htmx/graphs/image/{device}", metric)]
     return templates.TemplateResponse(
@@ -100,7 +99,7 @@ async def requests_table(
 @router.get("/choices", name="device:get-choices", response_class=HTMLResponse)
 async def choices(
     request: Request,
-    _: User = Depends(current_user),
+    _: Users = Depends(current_user),
     db: AsyncSession = Depends(get_session),
 ):
     repo = MeasurementRepository(MeasurementsTable, db)

@@ -1,7 +1,7 @@
 import asyncio
 
 import typer
-from fastapi_users.models import BaseUserDB
+from fastapi_users.models import UserProtocol
 
 from app.api.dependencies.db import async_session
 from app.core.auth import get_user_manager
@@ -15,12 +15,12 @@ from app.models.device_auth import DeviceAuthCreate
 app = typer.Typer()
 
 
-async def get_user(email: str) -> BaseUserDB:
+async def get_user(email: str) -> UserProtocol:
     await database.connect()
     session = await get_async_session().__anext__()
     user_db = await get_user_db(session).__anext__()
     manager = await get_user_manager(user_db).__anext__()
-    user: BaseUserDB = await manager.get_by_email(email)
+    user: UserProtocol = await manager.get_by_email(email)
     await database.disconnect()
     return user
 

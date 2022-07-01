@@ -11,7 +11,7 @@ from app.api.dependencies.files import templates
 from app.api.routes.users import current_user
 from app.db.repositories.measurement import MeasurementRepository
 from app.db.tables.measurements import Measurements as MeasurementsTable
-from app.models.user import User
+from app.db.tables.users import Users
 
 router = APIRouter(prefix="/current")
 
@@ -22,7 +22,7 @@ Device = namedtuple("Device", ["value", "text"])
 @router.get("/choices", name="device:get-choices", response_class=HTMLResponse)
 async def choices(
     request: Request,
-    _: User = Depends(current_user),
+    _: Users = Depends(current_user),
     db: AsyncSession = Depends(get_session),
 ):
     repo = MeasurementRepository(MeasurementsTable, db)
@@ -37,7 +37,7 @@ async def choices(
 async def reading(
     device: str,
     request: Request,
-    _: User = Depends(current_user),
+    _: Users = Depends(current_user),
     db: AsyncSession = Depends(get_session),
 ):
     repo = MeasurementRepository(MeasurementsTable, db)

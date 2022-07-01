@@ -1,11 +1,9 @@
 from fastapi import FastAPI
-from fastapi_users.user import UserNotExists
 from httpx import AsyncClient
 from starlette import status
 from ward import test, using, raises
 
 from app.api.dependencies.auth import fastapi_users
-from app.models.user import User
 from integration_tests.fixtures import app, client
 
 

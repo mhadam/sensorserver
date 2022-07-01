@@ -2,6 +2,11 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 import jwt
+from fastapi import HTTPException
+from passlib.context import CryptContext
+from pydantic import ValidationError
+from starlette import status
+
 from app.core.config import (
     SECRET_KEY,
     JWT_AUDIENCE,
@@ -9,13 +14,9 @@ from app.core.config import (
     DEVICE_ACCESS_TOKEN_EXPIRE_MINUTES,
     JWT_ALGORITHM,
 )
+from app.db.tables.users import Users
 from app.models.device_auth import DeviceJWTPayload
 from app.models.token import JWTMeta, JWTCreds, JWTPayload
-from app.models.user import UserDB
-from fastapi import HTTPException
-from passlib.context import CryptContext
-from pydantic import ValidationError
-from starlette import status
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -29,12 +30,12 @@ class AuthException(BaseException):
 
 
 def create_access_token_for_user(
-    user: UserDB,
+    user: Users,
     secret_key: str = str(SECRET_KEY),
     audience: str = JWT_AUDIENCE,
     expires_in: int = ACCESS_TOKEN_EXPIRE_MINUTES,
 ) -> Optional[str]:
-    if not user or not isinstance(user, UserDB):
+    if not user or not isinstance(user, Users):
         return None
     jwt_meta = JWTMeta(
         aud=audience,
